@@ -1,0 +1,7 @@
+body { font-family: Arial, sans-serif; background:#f0f2f5; margin:0; padding:0;}
+.auth-container, .dashboard { max-width:400px; margin:50px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 5px 20px rgba(0,0,0,0.1);}
+h1,h2 { color:#0f172a; }
+input { width:100%; padding:10px; margin:10px 0; border-radius:5px; border:1px solid #ccc;}
+button { width:100%; padding:10px; background:#0f172a; color:#fff; border:none; border-radius:5px; cursor:pointer;}
+button:hover { background:#1e293b;}
+.transactions, .investments, .wallet { margin-top:20px;}
