@@ -3,17 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LomaShares Register</title>
+<title>LomaShares Dashboard</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://js.paystack.co/v1/inline.js"></script>
 </head>
 <body>
-<div class="auth-container">
-  <h1>Register</h1>
-  <input type="text" id="reg-username" placeholder="Username">
-  <input type="password" id="reg-password" placeholder="Password">
-  <button onclick="register()">Register</button>
-  <p>Already have an account? <a href="login.html">Login</a></p>
+<div class="dashboard">
+  <h1>Welcome, <span id="userDisplay"></span></h1>
+  <div class="wallet">
+    <h2>Wallet Balance: ₦<span id="walletApproved">0</span></h2>
+    <input type="number" id="depositAmount" placeholder="Deposit Amount">
+    <button onclick="deposit()">Deposit</button>
+    <input type="number" id="withdrawAmount" placeholder="Withdraw Amount">
+    <button onclick="withdraw()">Withdraw</button>
+  </div>
+  <div class="investments">
+    <h2>Investments</h2>
+    <input type="number" id="investAmount" placeholder="Invest Amount">
+    <button onclick="invest()">Invest</button>
+    <div id="investmentList"></div>
+  </div>
+  <div class="transactions">
+    <h2>Transactions</h2>
+    <div id="txList"></div>
+  </div>
 </div>
+
 <script src="auth.js"></script>
+<script src="wallet.js"></script>
+<script src="investment.js"></script>
+<script src="transaction-history.js"></script>
 </body>
   </html>
