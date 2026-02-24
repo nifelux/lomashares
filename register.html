@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LomaShares Register</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script> <!-- your client setup -->
+  <meta charset="UTF-8">
+  <title>Lomashares Register</title>
+  <script type="module" src="lomashares-frontend.js"></script>
 </head>
 <body>
-<div class="auth-container">
-  <h1>Register</h1>
-  <input type="text" id="reg-username" placeholder="Username">
-  <input type="password" id="reg-password" placeholder="Password">
-  <button onclick="register()">Register</button>
-  <p>Already have an account? <a href="login.html">Login</a></p>
-</div>
-<script src="auth.js"></script>
+  <h2>Register</h2>
+  <input type="email" id="register-email" placeholder="Email" />
+  <input type="password" id="register-password" placeholder="Password" />
+  <button onclick="registerUser()">Register</button>
+
+  <p>Already have an account? <a href="index.html">Login</a></p>
+
+  <script>
+    function registerUser() {
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+      register(email, password);
+    }
+  </script>
 </body>
 </html>
