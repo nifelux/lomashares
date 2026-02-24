@@ -2,25 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lomashares Register</title>
+  <title>Lomashares Login</title>
   <link rel="stylesheet" href="style.css">
   <script type="module" src="lomashares-frontend.js"></script>
 </head>
 <body>
-  <h2>Register</h2>
-  <input type="email" id="register-email" placeholder="Email" required />
-  <input type="password" id="register-password" placeholder="Password" required />
-  <button id="register-btn">Register</button>
+  <h2>Login</h2>
+  <input type="email" id="login-email" placeholder="Email" required />
+  <input type="password" id="login-password" placeholder="Password" required />
+  <button id="login-btn">Login</button>
 
-  <p>Already have an account? <a href="index.html">Login</a></p>
+  <p>Don't have an account? <a href="register.html">Register</a></p>
 
   <script>
-    const registerBtn = document.getElementById('register-btn');
-    registerBtn.addEventListener('click', () => {
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
+    const loginBtn = document.getElementById('login-btn');
+    loginBtn.addEventListener('click', () => {
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
       if(!email || !password) return alert('Please fill all fields');
-      register(email, password); // Calls lomashares-frontend.js register function
+      login(email, password); // Calls lomashares-frontend.js login function
     });
   </script>
 </body>
