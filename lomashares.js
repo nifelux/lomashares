@@ -255,3 +255,124 @@ document.addEventListener("DOMContentLoaded", async () => {
   await renderTransactions();
   await settleMaturedInvestments();
 });
+// =======================
+// Gift Code Redemption (one-time use)
+// =======================
+export async function redeemGiftCode(userId, code) {
+  // Fetch gift code record
+  const { data: gift, error } = await supabase
+    .from('gift_codes')
+    .select('*')
+    .eq('code', code)
+    .single();
+
+  if (error || !gift) return alert("Invalid gift code");
+  if (gift.redeemed) return alert("This gift code has already been used");
+
+  // Credit wallet with gift amount
+  await supabase
+    .from('wallets')
+    .update({
+      approved: supabase.raw(`approved + ${gift.amount}`)
+    })
+    .eq('user_id', userId);
+
+  // Mark gift code as redeemed
+  await supabase
+    .from('gift_codes')
+    .update({ redeemed: true, used_by: userId })
+    .eq('code', code);
+
+  alert(`Gift code applied! ₦${gift.amount.toLocaleString()} added to your wallet`);
+}
+
+// =======================
+// Handle Referral on Registration (records the referral)
+// =======================
+export async function handleReferralOnSignup(newUserId, referralCode) {
+  if (!referralCode) return;
+
+  // Lookup referrer by code
+  const { data: referrer, error } = await supabase
+    .from('users')
+    .select('id')
+    .eq('referral_code', referralCode)
+    .single();
+
+  if (error || !referrer) return;
+
+  // Insert referral record
+  await supabase
+    .from('referrals')
+    .insert({
+      referrer_id: referrer.id,
+      referred_id: newUserId,
+      reward_given: false
+    });
+
+  console.log(`Referral recorded: referrer ${referrer.id}, new user ${newUserId}`);
+}
+
+// =======================
+// Handle Referral Bonus on Investment (10% of referred user's investment)
+// =======================
+export async function handleReferralOnInvestment(userId, investmentAmount) {
+  // Check if user was referred
+  const { data: referral, error } = await supabase
+    .from('referrals')
+    .select('*')
+    .eq('referred_id', userId)
+    .single();
+
+  if (error || !referral || referral.reward_given) return;
+
+  const bonus = investmentAmount * 0.10; // 10% referral bonus
+
+  // Credit the referrer's wallet
+  await supabase
+    .from('wallets')
+    .update({
+      approved: supabase.raw(`approved + ${bonus}`)
+    })
+    .eq('user_id', referral.referrer_id);
+
+  // Mark referral as rewarded
+  await supabase
+    .from('referrals')
+    .update({ reward_given: true })
+    .eq('id', referral.id);
+
+  console.log(`Referral bonus ₦${bonus.toLocaleString()} credited to user ${referral.referrer_id}`);
+}
+
+// =======================
+// Create Investment & Trigger Referral Bonus
+// =======================
+export async function makeInvestment(userId, amount) {
+  // Insert investment record
+  const { data: investment, error } = await supabase
+    .from('investments')
+    .insert({
+      user_id: userId,
+      amount,
+      status: 'active',
+      start_date: new Date().toISOString()
+    })
+    .select('*')
+    .single();
+
+  if (error) return alert("Error creating investment: " + error.message);
+
+  // Deduct investment amount from wallet
+  await supabase
+    .from('wallets')
+    .update({
+      approved: supabase.raw(`approved - ${amount}`)
+    })
+    .eq('user_id', userId);
+
+  // Handle referral bonus
+  await handleReferralOnInvestment(userId, amount);
+
+  alert(`Investment of ₦${amount.toLocaleString()} made successfully! Referral bonus credited if applicable.`);
+}
