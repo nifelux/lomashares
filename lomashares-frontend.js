@@ -246,7 +246,7 @@ async function approveWithdrawal(withdrawalId, amount, userId) {
 // Redirect to Login if not logged in
 // ------------------------------
 const user = supabase.auth.user();
-if (!user && !['/login.html', '/register.html'].includes(window.location.pathname)) {
+if (!user && !['/index.html', '/register.html'].includes(window.location.pathname)) {
   window.location.href = 'login.html';
 }
 
