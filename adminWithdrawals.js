@@ -1,8 +1,8 @@
 // adminWithdrawals.js
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = "YOUR_SUPABASE_URL";       // replace with your Supabase URL
-const SUPABASE_SERVICE_KEY = "YOUR_SUPABASE_SERVICE_KEY"; // replace with service_role key
+const SUPABASE_URL = "https://lpnnqxalmihxgszoifpa.supabase.co";       // replace with your Supabase URL
+const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MTczMzU4MSwiZXhwIjoyMDg3MzA5NTgxfQ.MsHTVooO9EHJGxBwe8pLX8uB0uK-5tklfA6u9dJXXZ8"; // replace with service_role key
 const PAYSTACK_SECRET_KEY = "process.env.PAYSTACK_SECRET_KEY"; // fetched automatically on server
 export const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
