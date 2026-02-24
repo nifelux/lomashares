@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Lomashares Register</title>
+  <link rel="stylesheet" href="style.css">
   <script type="module" src="lomashares-frontend.js"></script>
 </head>
 <body>
   <h2>Register</h2>
-  <input type="email" id="register-email" placeholder="Email" />
-  <input type="password" id="register-password" placeholder="Password" />
-  <button onclick="registerUser()">Register</button>
+  <input type="email" id="register-email" placeholder="Email" required />
+  <input type="password" id="register-password" placeholder="Password" required />
+  <button id="register-btn">Register</button>
 
   <p>Already have an account? <a href="index.html">Login</a></p>
 
   <script>
-    function registerUser() {
+    const registerBtn = document.getElementById('register-btn');
+    registerBtn.addEventListener('click', () => {
       const email = document.getElementById('register-email').value;
       const password = document.getElementById('register-password').value;
-      register(email, password);
-    }
+      if(!email || !password) return alert('Please fill all fields');
+      register(email, password); // Calls lomashares-frontend.js register function
+    });
   </script>
 </body>
 </html>
