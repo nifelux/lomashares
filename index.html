@@ -1,47 +1,19 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LomaShares Dashboard</title>
-<link rel="stylesheet" href="style.css">
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) {
-    window.location.href = "login.html";
-  }
-});
-</script>
-  <script src="https://js.paystack.co/v1/inline.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script> <!-- your client setup -->
+  <meta charset="UTF-8">
+  <title>Lomashares Login</title>
+  <script type="module" src="lomashares-frontend.js"></script>
 </head>
 <body>
-<div class="dashboard">
-  <h1>Welcome, <span id="userDisplay"></span></h1>
-  <div class="wallet">
-    <h2>Wallet Balance: ₦<span id="walletApproved">0</span></h2>
-    <input type="number" id="depositAmount" placeholder="Deposit Amount">
-    <button onclick="deposit()">Deposit</button>
-    <input type="number" id="withdrawAmount" placeholder="Withdraw Amount">
-    <button onclick="withdraw()">Withdraw</button>
-  </div>
-  <div class="investments">
-    <h2>Investments</h2>
-    <input type="number" id="investAmount" placeholder="Invest Amount">
-    <button onclick="invest()">Invest</button>
-    <div id="investmentList"></div>
-  </div>
-  <div class="transactions">
-    <h2>Transactions</h2>
-    <div id="txList"></div>
-  </div>
-</div>
+  <h2>Login</h2>
+  <input type="email" id="login-email" placeholder="Email" />
+  <input type="password" id="login-password" placeholder="Password" />
+  <button onclick="login(document.getElementById('login-email').value, document.getElementById('login-password').value)">
+    Login
+  </button>
 
-<script src="auth.js"></script>
-<script src="wallet.js"></script>
-<script src="investment.js"></script>
-<script src="transaction-history.js"></script>
+  <p>Don't have an account? <a href="register.html">Register</a></p>
 </body>
-  </html>
+</html>
