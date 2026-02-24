@@ -56,7 +56,7 @@ async function register(email, password) {
   });
 
   alert('Registration successful! Please login.');
-  window.location.href = 'login.html';
+  window.location.href = 'index.html';
 }
 
 // ------------------------------
