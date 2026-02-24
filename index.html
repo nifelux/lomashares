@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 <script src="supabase.js"></script> <!-- your client setup -->
 </head>
 <body>
+  <script>
+    console.log(process.env.NEXT_PUBLIC_SUPABASE_URL)
+  </script>
 <div class="dashboard">
   <h1>Welcome, <span id="userDisplay"></span></h1>
   <div class="wallet">
