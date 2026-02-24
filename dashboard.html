@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lomashares Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="lomashares-frontend.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Dashboard</h1>
+    <p id="wallet-balance">Balance: ₦0</p>
+    <nav>
+      <a href="investment.html">Investments</a> |
+      <a href="profile.html">Profile</a> |
+      <a href="refer.html">Refer</a> |
+      <a href="team.html">Team</a> |
+      <a href="transactions.html">Transactions</a> |
+      <a href="deposits.html">Deposits</a> |
+      <a href="withdrawals.html">Withdrawals</a> |
+      <a href="gift.html">Gift Code</a> |
+      <a href="bank.html">Bank Details</a> |
+      <a href="logout.html" onclick="supabase.auth.signOut();">Logout</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2>Investment Products</h2>
+      <div id="investment-cards" class="investment-cards">
+        <!-- Investment product cards will load here from lomashares-frontend.js -->
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Load wallet balance and dashboard investments
+    const user = supabase.auth.user();
+    if (user) {
+      updateWallet(user.id);          // Show current wallet balance
+      loadDashboardInvestments();     // Show all 5 investment products
+      // Active investments are no longer on dashboard
+    }
+  </script>
+</body>
+</html>
