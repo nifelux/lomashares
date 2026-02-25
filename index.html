@@ -2,18 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lomashares Login</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="lomashares-frontend.js"></script>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ------------------- */
+    /* Base Styles */
+    /* ------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #0a0a0a, #001f4d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    /* ------------------- */
+    /* Login Container */
+    /* ------------------- */
+    .login-container {
+      background-color: #0b0b0b;
+      width: 100%;
+      max-width: 400px;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    .login-container h1 {
+      margin-bottom: 25px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #00bfff;
+    }
+
+    /* ------------------- */
+    /* Input Fields */
+    /* ------------------- */
+    .login-container input {
+      width: 100%;
+      padding: 15px 20px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .login-container input::placeholder {
+      color: #888;
+    }
+
+    /* ------------------- */
+    /* Buttons */
+    /* ------------------- */
+    .login-container button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #00bfff, #004080);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-container button:hover {
+      background: linear-gradient(90deg, #004080, #00bfff);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,191,255,0.4);
+    }
+
+    /* ------------------- */
+    /* Links */
+    /* ------------------- */
+    .login-container .register-link {
+      display: block;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #888;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .login-container .register-link:hover {
+      color: #00bfff;
+    }
+
+    /* ------------------- */
+    /* Mobile Friendly */
+    /* ------------------- */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 35px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h2>Login</h2>
-  <input type="email" id="login-email" placeholder="Email" required />
-  <input type="password" id="login-password" placeholder="Password" required />
-  <button id="login-btn">Login</button>
 
-  <p>Don't have an account? <a href="register.html">Register</a></p>
+  <div class="login-container">
+    <h1>Welcome Back</h1>
 
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login(email.value, password.value)">Login</button>
+
+    <a href="register.html" class="register-link">Don't have an account? Register</a>
+  </div>
+
+  <script type="module" src="lomashares-frontend.js"></script> 
   <script>
     const loginBtn = document.getElementById('login-btn');
     loginBtn.addEventListener('click', () => {
