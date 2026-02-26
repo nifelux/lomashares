@@ -352,3 +352,17 @@ window.approveWithdrawal = function (userEmail, index) {
 window.addEventListener("load", function () {
   processDailyIncome();
 });
+
+window.toggleMenu = function () {
+    const menu = document.getElementById("dropdownMenu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+};
+
+window.addEventListener("click", function(e) {
+    const menu = document.getElementById("dropdownMenu");
+    const icon = document.querySelector(".menu-icon");
+
+    if (!icon.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = "none";
+    }
+});
