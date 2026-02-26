@@ -1,255 +1,354 @@
-// ------------------------------
-// Lomashares Frontend JS (Production Ready)
-// ------------------------------
-
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-// ------------------------------
-// Supabase Setup (STATIC HTML SAFE)
-// ------------------------------
-const SUPABASE_URL = 'https://lpnnqxalmihxgszoifpa.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw'
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+/* =====================================================
+   LOMASHARES FRONTEND COMPLETE SYSTEM
+   Version: Backend v2 Compatible
+===================================================== */
 
 
-// ------------------------------
-// Investment Products
-// ------------------------------
-const investmentProducts = [
-  { id: 1, price: 1000, dailyIncome: 500, validDays: 3 },
-  { id: 2, price: 3000, dailyIncome: 800, validDays: 5 },
-  { id: 3, price: 7000, dailyIncome: 1500, validDays: 7 },
-  { id: 4, price: 12000, dailyIncome: 2000, validDays: 9 },
-  { id: 5, price: 25000, dailyIncome: 5000, validDays: 7 },
-]
+/* =====================================================
+   DATABASE HELPERS
+===================================================== */
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function getAuthUser() {
+  return JSON.parse(localStorage.getItem("authUser"));
+}
+
+function setAuthUser(user) {
+  localStorage.setItem("authUser", JSON.stringify(user));
+}
+
+function logout() {
+  localStorage.removeItem("authUser");
+  window.location.href = "index.html";
+}
 
 
-// ------------------------------
-// AUTH FUNCTIONS (Supabase v2)
-// ------------------------------
-async function login(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({
+/* =====================================================
+   REFERRAL SYSTEM
+===================================================== */
+
+function generateReferralCode() {
+  return "LOMA" + Math.floor(100000 + Math.random() * 900000);
+}
+
+function isValidReferral(code) {
+  if (!code) return true;
+  return getUsers().some(u => u.myReferralCode === code);
+}
+
+function rewardSponsor(referralCode, amount) {
+  if (!referralCode) return;
+
+  const users = getUsers();
+  const sponsor = users.find(u => u.myReferralCode === referralCode);
+  if (!sponsor) return;
+
+  const bonus = amount * 0.10;
+
+  sponsor.balance += bonus;
+  sponsor.transactions.push({
+    type: "Referral Bonus",
+    amount: bonus,
+    date: new Date().toISOString()
+  });
+
+  saveUsers(users);
+}
+
+
+/* =====================================================
+   AUTHENTICATION
+===================================================== */
+
+window.handleRegister = function () {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const confirmPassword = document.getElementById("confirm-password").value.trim();
+  const referral = document.getElementById("referral-code").value.trim();
+
+  if (!email || !password || !confirmPassword) {
+    alert("All fields required");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  if (!isValidReferral(referral)) {
+    alert("Invalid referral code");
+    return;
+  }
+
+  const users = getUsers();
+
+  if (users.some(u => u.email === email)) {
+    alert("Email already exists");
+    return;
+  }
+
+  const newUser = {
     email,
     password,
-  })
+    referralUsed: referral || null,
+    myReferralCode: generateReferralCode(),
+    balance: 0,
+    totalDeposited: 0,
+    totalWithdrawn: 0,
+    investments: [],
+    transactions: [],
+    deposits: [],
+    withdrawals: [],
+    role: "user",
+    createdAt: new Date().toISOString()
+  };
 
-  if (error) {
-    alert(error.message)
-    return
+  users.push(newUser);
+  saveUsers(users);
+
+  alert("Registration successful");
+  window.location.href = "index.html";
+};
+
+
+window.handleLogin = function () {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if (!user) {
+    alert("Invalid login details");
+    return;
   }
 
-  window.location.href = 'dashboard.html'
-}
+  setAuthUser(user);
+  window.location.href = "dashboard.html";
+};
 
 
-async function register(email, password) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  })
+/* =====================================================
+   PAGE PROTECTION
+===================================================== */
 
-  if (error) {
-    alert(error.message)
-    return
+window.addEventListener("load", function () {
+  const protectedPages = [
+    "dashboard.html",
+    "investment.html",
+    "deposit.html",
+    "withdraw.html",
+    "profile.html",
+    "refer.html",
+    "team.html",
+    "transactions.html",
+    "admin-withdrawals.html"
+  ];
+
+  const page = window.location.pathname.split("/").pop();
+
+  if (protectedPages.includes(page)) {
+    if (!getAuthUser()) {
+      window.location.href = "index.html";
+    }
+  }
+});
+
+
+/* =====================================================
+   INVESTMENT PRODUCTS
+===================================================== */
+
+const PRODUCTS = [
+  { id: 1, price: 1000, daily: 500, days: 3 },
+  { id: 2, price: 3000, daily: 800, days: 5 },
+  { id: 3, price: 7000, daily: 1500, days: 7 },
+  { id: 4, price: 12000, daily: 2000, days: 9 },
+  { id: 5, price: 25000, daily: 5000, days: 7 }
+];
+
+
+/* =====================================================
+   INVEST FUNCTION
+===================================================== */
+
+window.invest = function (productId) {
+  const users = getUsers();
+  const auth = getAuthUser();
+  const user = users.find(u => u.email === auth.email);
+  const product = PRODUCTS.find(p => p.id === productId);
+
+  if (user.balance < product.price) {
+    alert("Insufficient balance");
+    return;
   }
 
-  alert('Registration successful! Please login.')
-  window.location.href = 'index.html'
+  user.balance -= product.price;
+
+  const investment = {
+    productId,
+    price: product.price,
+    daily: product.daily,
+    days: product.days,
+    startDate: new Date().toISOString(),
+    lastPaid: null,
+    completedDays: 0,
+    active: true
+  };
+
+  user.investments.push(investment);
+
+  rewardSponsor(user.referralUsed, product.price);
+
+  user.transactions.push({
+    type: "Investment",
+    amount: product.price,
+    date: new Date().toISOString()
+  });
+
+  saveUsers(users);
+  setAuthUser(user);
+
+  alert("Investment successful");
+};
+
+
+/* =====================================================
+   DAILY PROFIT SYSTEM
+===================================================== */
+
+function processDailyIncome() {
+  const users = getUsers();
+  const auth = getAuthUser();
+  const user = users.find(u => u.email === auth.email);
+
+  const now = new Date();
+
+  user.investments.forEach(inv => {
+    if (!inv.active) return;
+
+    const last = inv.lastPaid ? new Date(inv.lastPaid) : new Date(inv.startDate);
+    const diffHours = (now - last) / (1000 * 60 * 60);
+
+    if (diffHours >= 24 && inv.completedDays < inv.days) {
+      user.balance += inv.daily;
+      inv.completedDays += 1;
+      inv.lastPaid = now.toISOString();
+
+      user.transactions.push({
+        type: "Daily Income",
+        amount: inv.daily,
+        date: now.toISOString()
+      });
+
+      if (inv.completedDays >= inv.days) {
+        inv.active = false;
+      }
+    }
+  });
+
+  saveUsers(users);
+  setAuthUser(user);
 }
 
 
-async function logout() {
-  await supabase.auth.signOut()
-  window.location.href = 'index.html'
-}
+/* =====================================================
+   DEPOSIT
+===================================================== */
+
+window.deposit = function (amount) {
+  const users = getUsers();
+  const auth = getAuthUser();
+  const user = users.find(u => u.email === auth.email);
+
+  amount = parseFloat(amount);
+
+  user.balance += amount;
+  user.totalDeposited += amount;
+
+  user.deposits.push({ amount, date: new Date().toISOString() });
+
+  user.transactions.push({
+    type: "Deposit",
+    amount,
+    date: new Date().toISOString()
+  });
+
+  saveUsers(users);
+  setAuthUser(user);
+
+  alert("Deposit successful");
+};
 
 
-// ------------------------------
-// Wallet Functions
-// ------------------------------
-async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
-}
+/* =====================================================
+   WITHDRAW
+===================================================== */
 
+window.withdraw = function (amount) {
+  const users = getUsers();
+  const auth = getAuthUser();
+  const user = users.find(u => u.email === auth.email);
 
-async function getWallet(userId) {
-  const { data } = await supabase
-    .from('wallets')
-    .select('*')
-    .eq('user_id', userId)
-    .single()
+  amount = parseFloat(amount);
 
-  return data || { balance: 0 }
-}
-
-
-async function updateWallet(userId) {
-  const wallet = await getWallet(userId)
-  const el = document.getElementById('wallet-balance')
-  if (el) el.innerText = `Balance: ₦${wallet.balance}`
-}
-
-
-// ------------------------------
-// Dashboard Products
-// ------------------------------
-function loadDashboardInvestments() {
-  const container = document.getElementById('investment-cards')
-  if (!container) return
-
-  container.innerHTML = ''
-
-  investmentProducts.forEach((prod) => {
-    const card = document.createElement('div')
-
-    card.innerHTML = `
-      <h3>Product ${prod.id}</h3>
-      <p>Price: ₦${prod.price}</p>
-      <p>Daily Income: ₦${prod.dailyIncome}</p>
-      <p>Validity: ${prod.validDays} days</p>
-      <input type="text" id="referral-code-${prod.id}" placeholder="Referral code (optional)" />
-      <button onclick="invest(${prod.id}, ${prod.price})">Invest</button>
-      <hr/>
-    `
-
-    container.appendChild(card)
-  })
-}
-
-
-// ------------------------------
-// Invest
-// ------------------------------
-async function invest(productId, amount) {
-  const user = await getCurrentUser()
-  if (!user) return alert('Please login first.')
-
-  const referralCode =
-    document.getElementById(`referral-code-${productId}`)?.value || null
-
-  const res = await fetch('/api/investment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: user.id,
-      investment_type: productId,
-      amount,
-      referral_code: referralCode,
-    }),
-  })
-
-  const data = await res.json()
-
-  if (data.error) {
-    alert(data.error)
-    return
+  if (user.balance < amount) {
+    alert("Insufficient balance");
+    return;
   }
 
-  alert('Investment successful!')
-  updateWallet(user.id)
-}
+  user.withdrawals.push({
+    amount,
+    status: "Pending",
+    date: new Date().toISOString()
+  });
+
+  saveUsers(users);
+  setAuthUser(user);
+
+  alert("Withdrawal request submitted");
+};
 
 
-// ------------------------------
-// Load User Investments
-// ------------------------------
-async function loadUserInvestments() {
-  const user = await getCurrentUser()
-  if (!user) return
+/* =====================================================
+   ADMIN WITHDRAW APPROVAL
+===================================================== */
 
-  const { data } = await supabase
-    .from('investments')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('start_date', { ascending: false })
+window.approveWithdrawal = function (userEmail, index) {
+  const users = getUsers();
+  const user = users.find(u => u.email === userEmail);
 
-  const container = document.getElementById('user-investments')
-  if (!container) return
+  const withdrawal = user.withdrawals[index];
 
-  container.innerHTML = ''
+  if (withdrawal.status !== "Pending") return;
 
-  data.forEach((inv) => {
-    const product = investmentProducts.find(
-      (p) => p.id === inv.investment_type
-    )
+  withdrawal.status = "Approved";
 
-    const card = document.createElement('div')
+  user.balance -= withdrawal.amount;
+  user.totalWithdrawn += withdrawal.amount;
 
-    card.innerHTML = `
-      <h4>Product ${inv.investment_type}</h4>
-      <p>Amount: ₦${inv.amount}</p>
-      <p>Daily Income: ₦${product?.dailyIncome || 0}</p>
-      <p>Start: ${new Date(inv.start_date).toLocaleDateString()}</p>
-      <p>End: ${new Date(inv.end_date).toLocaleDateString()}</p>
-      <p>Status: ${inv.status}</p>
-      <p>Profit Earned: ₦${inv.profit_earned || 0}</p>
-      <hr/>
-    `
+  user.transactions.push({
+    type: "Withdrawal",
+    amount: withdrawal.amount,
+    date: new Date().toISOString()
+  });
 
-    container.appendChild(card)
-  })
-}
+  saveUsers(users);
+};
 
 
-// ------------------------------
-// Totals
-// ------------------------------
-async function loadTotals() {
-  const user = await getCurrentUser()
-  if (!user) return
+/* =====================================================
+   DASHBOARD AUTO UPDATE
+===================================================== */
 
-  const { data: deposits } = await supabase
-    .from('deposits')
-    .select('amount')
-    .eq('user_id', user.id)
-
-  const { data: withdrawals } = await supabase
-    .from('withdrawals')
-    .select('amount')
-    .eq('user_id', user.id)
-
-  const totalDeposit = deposits?.reduce((s, d) => s + d.amount, 0) || 0
-  const totalWithdrawal =
-    withdrawals?.reduce((s, w) => s + w.amount, 0) || 0
-
-  const depositEl = document.getElementById('total-deposit')
-  const withdrawEl = document.getElementById('total-withdraw')
-
-  if (depositEl)
-    depositEl.innerText = `Total Deposited: ₦${totalDeposit}`
-  if (withdrawEl)
-    withdrawEl.innerText = `Total Withdrawn: ₦${totalWithdrawal}`
-}
-
-
-// ------------------------------
-// Route Protection
-// ------------------------------
-;(async () => {
-  const user = await getCurrentUser()
-
-  const publicPages = ['/', '/index.html', '/register.html']
-
-  if (!user && !publicPages.includes(window.location.pathname)) {
-    window.location.href = 'index.html'
-  }
-
-  if (user) {
-    updateWallet(user.id)
-  }
-})()
-
-
-// ------------------------------
-// Expose Globally
-// ------------------------------
-window.login = login
-window.register = register
-window.logout = logout
-window.loadDashboardInvestments = loadDashboardInvestments
-window.invest = invest
-window.loadUserInvestments = loadUserInvestments
-window.updateWallet = updateWallet
-window.loadTotals = loadTotals
+window.addEventListener("load", function () {
+  processDailyIncome();
+});
