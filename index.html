@@ -41,6 +41,21 @@
       text-align: center;
     }
 
+    /* ------------------- */
+    /* Logo */
+    /* ------------------- */
+    .login-container .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      object-fit: cover;
+      border: 2px solid #00bfff;
+    }
+
+    /* ------------------- */
+    /* Heading */
+    /* ------------------- */
     .login-container h1 {
       margin-bottom: 25px;
       font-size: 28px;
@@ -119,6 +134,9 @@
 <body>
 
   <div class="login-container">
+    <!-- Logo -->
+    <img src="images/lomashares-logo.png" alt="Lomashares Logo" class="logo">
+
     <h1>Welcome Back</h1>
 
     <input type="email" id="email" placeholder="Email">
@@ -129,8 +147,8 @@
     <a href="register.html" class="register-link">Don't have an account? Register</a>
   </div>
 
-  <script type="module" src="lomashares-frontend.js"></script> 
-  <script>
+  <script type="module" src="lomashares-frontend.js"></script>
+<script>
     const loginBtn = document.getElementById('login-btn');
     loginBtn.addEventListener('click', () => {
       const email = document.getElementById('login-email').value;
