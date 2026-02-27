@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lomashares Deposit</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    background: #f4f6fc;
+    padding-top: 60px; /* for fixed header */
+  }
+
+  /* Header */
+  .main-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to right, #001f4d, #004080);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+  }
+
+  /* Deposit container */
+  .deposit-container {
+    max-width: 400px;
+    margin: 20px auto 80px auto; /* bottom space for footer */
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 20px;
+  }
+
+  .deposit-container h1 {
+    text-align: center;
+    color: #004080;
+    margin-bottom: 20px;
+  }
+
+  .amount-field input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+  }
+
+  /* Shortcut amounts */
+  .shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .shortcuts button {
+    flex: 1 1 30%;
+    padding: 12px 0;
+    background: #004080;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .shortcuts button:hover {
+    background: #001f4d;
+  }
+
+  /* Deposit button */
+  .deposit-container button.deposit-btn {
+    width: 100%;
+    padding: 15px;
+    background: #1e90ff;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .deposit-container button.deposit-btn:hover {
+    background: #004080;
+  }
+
+  /* Footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(to right, #001f4d, #004080);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 60px;
+    color: white;
+  }
+
+  .footer a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer a i {
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+</style>
+</head>
+<body>
+
+<header class="main-header">
+  Lomashares
+</header>
+
+<div class="deposit-container">
+  <h1>Deposit Funds</h1>
+
+  <div class="amount-field">
+    <input type="number" id="deposit-amount" placeholder="Enter amount">
+  </div>
+
+  <div class="shortcuts">
+    <button onclick="setShortcut(1000)">#1000</button>
+    <button onclick="setShortcut(5000)">#5000</button>
+    <button onclick="setShortcut(10000)">#10000</button>
+    <button onclick="setShortcut(30000)">#30000</button>
+    <button onclick="setShortcut(50000)">#50000</button>
+    <button onclick="setShortcut(100000)">#100000</button>
+  </div>
+
+  <button class="deposit-btn" onclick="handleDeposit()">Deposit</button>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="index.html"><i class="fa fa-home"></i>Home</a>
+  <a href="investment.html"><i class="fa fa-wallet"></i>Invest</a>
+  <a href="team.html"><i class="fa fa-users"></i>Team</a>
+  <a href="profile.html"><i class="fa fa-user"></i>Profile</a>
+</div>
+
+<script>
+  // Shortcut function
+  function setShortcut(amount) {
+    document.getElementById('deposit-amount').value = amount;
+  }
+
+  // Deposit function calling wallet.js API
+  async function handleDeposit() {
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    if (!amount || amount <= 0) {
+      return alert('Enter a valid amount');
+    }
+
+    // Get logged-in user
+    const authUser = JSON.parse(localStorage.getItem('authUser'));
+    if (!authUser) return window.location.href = 'index.html';
+
+    try {
+      const res = await fetch('/api/wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: authUser.email,
+          type: 'deposit',
+          amount
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Deposit successful! New balance: #${data.balance}`);
+        // Update localStorage
+        authUser.balance = data.balance;
+        localStorage.setItem('authUser', JSON.stringify(authUser));
+        document.getElementById('deposit-amount').value = '';
+      } else {
+        alert(data.error || 'Deposit failed');
+      }
+    } catch (err) {
+      alert('Error connecting to wallet API');
+      console.error(err);
+    }
+  }
+
+  // Redirect if not logged in
+  const authUser = JSON.parse(localStorage.getItem('authUser'));
+  if (!authUser) window.location.href = 'index.html';
+</script>
+
+</body>
+  </html>
