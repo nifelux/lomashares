@@ -137,7 +137,39 @@ body { background: linear-gradient(180deg, #0a0a0a, #001f4d); color:#fff; min-he
   <a href="team.html"><i class="fas fa-users"></i> Team</a>
   <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
 </footer>
+<script>
+// Check auth status and redirect accordingly
+(function() {
+    const authUser = JSON.parse(localStorage.getItem('authUser'));
 
+    const currentPage = window.location.pathname.split("/").pop();
+
+    // Pages that require login
+    const protectedPages = [
+        "dashboard.html",
+        "investment.html",
+        "deposit.html",
+        "withdraw.html",
+        "profile.html",
+        "refer.html",
+        "team.html",
+        "transactions.html",
+        "admin-withdrawals.html"
+    ];
+
+    // Redirect to dashboard if already logged in and on index/login/register
+    if(authUser && ["index.html", "login.html", "register.html"].includes(currentPage)) {
+        window.location.href = "dashboard.html";
+        return;
+    }
+
+    // Redirect to index page if not logged in and on protected pages
+    if(!authUser && protectedPages.includes(currentPage)) {
+        window.location.href = "index.html";
+        return;
+    }
+})();
+</script>
 <script>
 /* DROPDOWN MENU */
 function toggleMenu() {
