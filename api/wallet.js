@@ -1,91 +1,87 @@
-import axios from "axios";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// /api/wallet.js
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+  // Check env variables
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return res.status(500).json({
+      error: "Supabase environment variables not set"
+    });
   }
 
-  try {
-    const { reference, user_id } = req.body;
+  // Dynamically import supabase client
+  const { createClient } = await import('@supabase/supabase-js');
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
-    if (!reference || !user_id) {
-      return res.status(400).json({ message: "Missing reference or user." });
-    }
-
-    // Verify with Paystack
-    const verifyRes = await axios.get(
-      `https://api.paystack.co/transaction/verify/${reference}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`
-        }
-      }
-    );
-
-    const payment = verifyRes.data.data;
-
-    if (payment.status !== "success") {
-      return res.status(400).json({ message: "Payment not successful." });
-    }
-
-    const amountPaid = payment.amount / 100;
-
-    // Prevent duplicate
-    const { data: existing } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("reference", reference)
-      .maybeSingle();
-
-    if (existing) {
-      return res.status(400).json({ message: "Already processed." });
-    }
-
-    // Insert transaction
-    await supabase.from("transactions").insert({
-      user_id,
-      type: "deposit",
-      amount: amountPaid,
-      reference,
-      status: "completed"
-    });
-
-    // Get wallet
-    const { data: wallet } = await supabase
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", user_id)
-      .maybeSingle();
-
-    let newBalance = amountPaid;
-
-    if (wallet) {
-      newBalance = wallet.balance + amountPaid;
-
-      await supabase
-        .from("wallets")
-        .update({ balance: newBalance })
-        .eq("user_id", user_id);
-    } else {
-      await supabase.from("wallets").insert({
-        user_id,
-        balance: amountPaid
-      });
-    }
-
+  // -------------------
+  // GET: test endpoint
+  // -------------------
+  if (req.method === "GET") {
     return res.status(200).json({
-      message: "Deposit successful",
-      balance: newBalance
+      message: "Wallet API working",
+      hasUrl: !!supabaseUrl,
+      hasServiceRole: !!supabaseKey
     });
-
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error." });
   }
+
+  // -------------------
+  // POST: deposit or withdraw
+  // -------------------
+  if (req.method === "POST") {
+    const { email, type, amount } = req.body;
+
+    if (!email || !type || !amount) {
+      return res.status(400).json({ error: "Missing email, type, or amount" });
+    }
+
+    try {
+      // Fetch user first
+      const { data: users, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (fetchError || !users) {
+        throw new Error("User not found");
       }
+
+      let newBalance = parseFloat(users.balance);
+
+      if (type === "deposit") {
+        newBalance += parseFloat(amount);
+      } else if (type === "withdraw") {
+        if (newBalance < amount) {
+          return res.status(400).json({ error: "Insufficient balance" });
+        }
+        newBalance -= parseFloat(amount);
+      } else {
+        return res.status(400).json({ error: "Invalid type" });
+      }
+
+      // Update balance
+      const { data, error } = await supabase
+        .from('users')
+        .update({ balance: newBalance })
+        .eq('email', email)
+        .select();
+
+      if (error) throw error;
+
+      return res.status(200).json({
+        message: `${type} successful`,
+        balance: newBalance,
+        data
+      });
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // -------------------
+  // Method not allowed
+  // -------------------
+  return res.status(405).json({ error: "Method not allowed" });
+        }
