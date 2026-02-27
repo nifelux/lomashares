@@ -1,182 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lomashares Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto', sans-serif; }
-    body { background-color:#0a0a0a; color:#fff; min-height:100vh; display:flex; flex-direction:column; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lomashares Dashboard</title>
 
-    /* Header */
-    .header { position:sticky; top:0; background:linear-gradient(90deg,#000,#004080); display:flex; justify-content:space-between; align-items:center; padding:10px 20px; z-index:1000; }
-    .logo-text { color:#00bfff; font-weight:bold; font-size:20px; letter-spacing:2px; }
-    .menu-icon { cursor:pointer; display:flex; flex-direction:column; justify-content:center; }
-    .menu-icon span { width:25px; height:3px; background:#00bfff; margin:4px 0; border-radius:2px; }
-    .dropdown-menu { position:absolute; top:50px; left:20px; background:#001f4d; border-radius:8px; display:none; flex-direction:column; width:150px; box-shadow:0 5px 20px rgba(0,0,0,0.5);}
-    .dropdown-menu a { color:white; text-decoration:none; padding:10px; transition:0.3s; }
-    .dropdown-menu a:hover { background:#00bfff; color:#000; }
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-    /* Main container */
-    .container { flex:1; padding:20px; max-width:1200px; margin:0 auto; }
+<style>
+/* ================== BASE STYLES ================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
 
-    /* Wallet summary */
-    .wallet { display:flex; justify-content:space-around; margin-bottom:20px; flex-wrap:wrap; }
-    .wallet-card { background:#001f4d; padding:20px; border-radius:10px; flex:1 1 200px; margin:10px; text-align:center; box-shadow:0 4px 15px rgba(0,191,255,0.3); }
-    .wallet-card h3 { color:#00bfff; margin-bottom:10px; }
-    .wallet-card p { font-size:18px; font-weight:500; }
+body {
+  background: linear-gradient(180deg, #0a0a0a, #001f4d);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    /* Quick links */
-    .quick-links { display:flex; justify-content:space-around; flex-wrap:wrap; margin-bottom:20px; }
-    .quick-links button { background:#004080; color:#fff; border:none; padding:15px 25px; margin:10px; border-radius:10px; cursor:pointer; transition:all 0.3s; font-size:16px; }
-    .quick-links button:hover { background:#00bfff; color:#000; transform:translateY(-2px); }
+/* ================== HEADER ================== */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(to right, #000000, #0a1f44);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
 
-    /* Investment products */
-    .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
-    .product-card { background:#001f4d; padding:15px; border-radius:10px; box-shadow:0 4px 15px rgba(0,191,255,0.2); display:flex; flex-direction:column; justify-content:space-between; }
-    .product-card h4 { color:#00bfff; margin-bottom:10px; }
-    .product-card p { margin-bottom:8px; font-size:14px; }
-    .product-card button { background:#00bfff; color:#000; padding:10px; border:none; border-radius:8px; cursor:pointer; font-weight:500; transition:all 0.3s; }
-    .product-card button:disabled { background:#555; cursor:not-allowed; color:#ccc; }
-    .product-card button:hover:not(:disabled) { background:#004080; color:#fff; transform:translateY(-2px); }
+.header .logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #1e90ff;
+}
 
-    /* Footer */
-    footer { background:#000; padding:15px 20px; text-align:center; margin-top:auto; }
-    footer a { color:#00bfff; text-decoration:none; margin:0 15px; transition:color 0.3s; }
-    footer a:hover { color:#fff; }
+/* ================== DROPDOWN MENU ================== */
+.menu-icon {
+  position: absolute;
+  left: 15px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 18px;
+}
 
-    /* Responsive */
-    @media(max-width:600px){ .wallet, .quick-links { flex-direction:column; align-items:center; } }
-  </style>
+.menu-icon span {
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: #1e90ff;
+  border-radius: 2px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: #0a1f44;
+  width: 160px;
+  border-radius: 8px;
+  display: none;
+  flex-direction: column;
+  padding: 10px 0;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+
+.dropdown-menu a {
+  color: #fff;
+  padding: 12px 20px;
+  text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+  background: #1e90ff;
+}
+
+/* ================== MAIN CONTENT ================== */
+.main {
+  margin-top: 70px;
+  padding: 15px;
+  flex: 1;
+}
+
+/* Wallet Info */
+.wallet {
+  background: #0b0b0b;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,191,255,0.2);
+}
+
+.wallet h2 {
+  color: #00bfff;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.wallet p {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+/* Quick Links */
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.quick-links button {
+  flex: 1 1 48%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #004080;
+  color: #fff;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.quick-links button:hover {
+  background: #00bfff;
+}
+
+/* Product List */
+.products {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.product-card {
+  background: #0b0b0b;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,191,255,0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.product-card h3 {
+  color: #00bfff;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.product-card p {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.product-card button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #004080;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.product-card button:hover {
+  background: #00bfff;
+}
+
+/* ================== FOOTER ================== */
+.footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #0a1f44;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.4);
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  text-align: center;
+}
+
+.footer a:hover {
+  color: #00bfff;
+}
+
+/* ================== MOBILE ================== */
+@media (max-width: 480px) {
+  .wallet h2 { font-size: 16px; }
+  .wallet p { font-size: 14px; }
+  .quick-links button { font-size: 14px; padding: 10px; }
+  .product-card h3 { font-size: 15px; }
+  .product-card p { font-size: 13px; }
+}
+</style>
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="menu-icon" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </div>
-    <div class="logo-text">LOMASHARES</div>
-    <div class="dropdown-menu" id="dropdownMenu">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html">Profile</a>
-      <a href="team.html">Team</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </div>
-  </header>
 
-  <!-- Main Container -->
-  <div class="container">
-    <!-- Wallet -->
-    <div class="wallet">
-      <div class="wallet-card">
-        <h3>Balance</h3>
-        <p id="balance">₦0</p>
-      </div>
-      <div class="wallet-card">
-        <h3>Total Deposited</h3>
-        <p id="totalDeposited">₦0</p>
-      </div>
-      <div class="wallet-card">
-        <h3>Total Withdrawn</h3>
-        <p id="totalWithdrawn">₦0</p>
-      </div>
-    </div>
-
-    <!-- Quick Links -->
-    <div class="quick-links">
-      <button onclick="depositPrompt()">Deposit</button>
-      <button onclick="withdrawPrompt()">Withdraw</button>
-      <button onclick="location.href='investment.html'">Invest</button>
-      <button onclick="referFriend()">Refer</button>
-    </div>
-
-    <!-- Investment Products -->
-    <div class="products" id="productList">
-      <!-- JS will render products here -->
-    </div>
+<!-- HEADER -->
+<header class="header">
+  <div class="menu-icon" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
-
-  <!-- Footer -->
-  <footer>
-    <a href="dashboard.html">Home</a>
+  <div class="logo-text">LOMASHARES</div>
+  <div class="dropdown-menu" id="dropdownMenu">
+    <a href="index.html">Home</a>
     <a href="investment.html">Invest</a>
     <a href="team.html">Team</a>
     <a href="profile.html">Profile</a>
-  </footer>
+  </div>
+</header>
 
-  <script type="module" src="lomashares-frontend.js"></script>
-  <script>
-    // Dropdown toggle
-    function toggleMenu() {
-      const menu = document.getElementById("dropdownMenu");
-      menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-    }
+<!-- MAIN CONTENT -->
+<div class="main">
 
-    // Render wallet
-    function renderWallet() {
-      const user = JSON.parse(localStorage.getItem("authUser"));
-      if(!user) return;
-      document.getElementById("balance").textContent = "₦" + user.balance;
-      document.getElementById("totalDeposited").textContent = "₦" + user.totalDeposited;
-      document.getElementById("totalWithdrawn").textContent = "₦" + user.totalWithdrawn;
-    }
+  <!-- WALLET INFO -->
+  <div class="wallet">
+    <h2>Wallet Balance: ₦<span id="wallet-balance">0</span></h2>
+    <p>Total Deposited: ₦<span id="total-deposit">0</span></p>
+    <p>Total Withdrawn: ₦<span id="total-withdraw">0</span></p>
+  </div>
 
-    // Render products
-    function renderProducts() {
-      const user = JSON.parse(localStorage.getItem("authUser"));
-      const productsContainer = document.getElementById("productList");
-      productsContainer.innerHTML = "";
-      const PRODUCTS = [
-        { id: 1, price: 3000 },
-        { id: 2, price: 5000 },
-        { id: 3, price: 7000 },
-        { id: 4, price: 10000 },
-        { id: 5, price: 15000 },
-        { id: 6, price: 20000 },
-        { id: 7, price: 30000 },
-        { id: 8, price: 40000 },
-        { id: 9, price: 50000 },
-        { id: 10, price: 100000 }
-      ];
+  <!-- QUICK LINKS -->
+  <div class="quick-links">
+    <button onclick="window.location.href='deposit.html'">Deposit</button>
+    <button onclick="window.location.href='withdraw.html'">Withdraw</button>
+    <button onclick="window.location.href='gift.html'">Gift</button>
+    <button onclick="window.location.href='refer.html'">Refer</button>
+  </div>
 
-      PRODUCTS.forEach(product => {
-        const investedTimes = user.investments.filter(inv => inv.productId === product.id).length;
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <h4>Product #${product.id}</h4>
-          <p>Price: ₦${product.price}</p>
-          <p>Daily Income: ₦${(product.price*2/30).toFixed(2)}</p>
-          <p>Days: 30</p>
-          <button onclick="invest(${product.id})" ${investedTimes>=2 ? "disabled" : ""}>Invest</button>
-        `;
-        productsContainer.appendChild(card);
-      });
-    }
+  <!-- PRODUCTS LIST -->
+  <div class="products" id="products-list">
+    <!-- Product cards will be injected here by JS -->
+  </div>
 
-    // Deposit prompt
-    function depositPrompt() {
-      const amount = prompt("Enter deposit amount:");
-      if(amount) deposit(parseFloat(amount));
-    }
+</div>
 
-    // Withdraw prompt
-    function withdrawPrompt() {
-      const amount = prompt("Enter withdrawal amount:");
-      if(amount) withdraw(parseFloat(amount));
-    }
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="index.html">Home</a>
+  <a href="investment.html">Invest</a>
+  <a href="team.html">Team</a>
+  <a href="profile.html">Profile</a>
+</footer>
 
-    // Refer friend
-    function referFriend() {
-      alert("Share your referral code with friends: " + JSON.parse(localStorage.getItem("authUser")).myReferralCode);
-    }
+<script>
+/* DROPDOWN MENU */
+function toggleMenu() {
+  const menu = document.getElementById('dropdownMenu');
+  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
 
-    // Initialize dashboard
-    window.addEventListener("load", function(){
-      renderWallet();
-      renderProducts();
-    });
-  </script>
+window.addEventListener('click', function(e){
+  const menu = document.getElementById('dropdownMenu');
+  const icon = document.querySelector('.menu-icon');
+  if(!icon.contains(e.target) && !menu.contains(e.target)){
+    menu.style.display = 'none';
+  }
+});
+
+/* DUMMY USER DATA */
+const PRODUCTS = [
+  { id: 1, price: 3000 },
+  { id: 2, price: 5000 },
+  { id: 3, price: 7000 },
+  { id: 4, price: 10000 },
+  { id: 5, price: 15000 },
+  { id: 6, price: 20000 },
+  { id: 7, price: 30000 },
+  { id: 8, price: 40000 },
+  { id: 9, price: 50000 },
+  { id: 10, price: 100000 }
+];
+
+/* GET USER FROM LOCALSTORAGE */
+function getAuthUser() {
+  return JSON.parse(localStorage.getItem('authUser'));
+}
+
+/* SHOW WALLET INFO */
+function updateWallet() {
+  const user = getAuthUser();
+  if(!user) return;
+  document.getElementById('wallet-balance').textContent = user.balance || 0;
+  document.getElementById('total-deposit').textContent = user.totalDeposited || 0;
+  document.getElementById('total-withdraw').textContent = user.totalWithdrawn || 0;
+}
+
+/* SHOW PRODUCTS */
+function renderProducts() {
+  const container = document.getElementById('products-list');
+  container.innerHTML = '';
+
+  const user = getAuthUser();
+  if(!user) return;
+
+  PRODUCTS.forEach(p => {
+    const investedTimes = user.investments.filter(inv => inv.productId === p.id).length;
+    const buttonText = investedTimes >= 2 ? 'Max Invested' : 'Invest';
+
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <h3>Product ₦${p.price.toLocaleString()}</h3>
+      <p>Total Return: ₦${(p.price*2).toLocaleString()} (200% in 30 days)</p>
+      <p>Invested: ${investedTimes} / 2</p>
+      <button ${investedTimes >= 2 ? 'disabled' : ''} onclick="invest(${p.id})">${buttonText}</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* INVEST FUNCTION */
+function invest(productId){
+  const users = JSON.parse(localStorage.getItem('users')) || [];
+  const user = getAuthUser();
+  if(!user) return;
+
+  const product = PRODUCTS.find(p => p.id === productId);
+  if(!product) return;
+
+  if(user.balance < product.price){
+    alert('Insufficient balance');
+    return;
+  }
+
+  const investedTimes = user.investments.filter(inv=>inv.productId===productId).length;
+  if(investedTimes >= 2){
+    alert('You can only invest in this product twice lifetime');
+    return;
+  }
+
+  // Deduct balance
+  user.balance -= product.price;
+
+  // Add investment
+  const totalReturn = product.price*2;
+  const dailyIncome = totalReturn/30;
+  const investment = {
+    productId,
+    price: product.price,
+    daily: dailyIncome,
+    days:30,
+    startDate: new Date().toISOString(),
+    lastPaid:null,
+    completedDays:0,
+    active:true
+  };
+
+  user.investments.push(investment);
+
+  // Update localStorage
+  const allUsers = users.map(u=>u.email===user.email ? user : u);
+  localStorage.setItem('users', JSON.stringify(allUsers));
+  localStorage.setItem('authUser', JSON.stringify(user));
+
+  updateWallet();
+  renderProducts();
+  alert('Investment successful');
+}
+
+/* INITIALIZE DASHBOARD */
+window.addEventListener('load', function(){
+  updateWallet();
+  renderProducts();
+});
+</script>
 </body>
-</html>
+    </html>
