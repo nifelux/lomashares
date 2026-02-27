@@ -1,87 +1,68 @@
-// /api/wallet.js
-
 export default async function handler(req, res) {
-  // Check env variables
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return res.status(500).json({
-      error: "Supabase environment variables not set"
-    });
+  // Only allow POST
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Dynamically import supabase client
-  const { createClient } = await import('@supabase/supabase-js');
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  try {
+    const { amount, userEmail } = req.body;
 
-  // -------------------
-  // GET: test endpoint
-  // -------------------
-  if (req.method === "GET") {
+    if (!amount || !userEmail) {
+      return res.status(400).json({ error: "Missing amount or userEmail" });
+    }
+
+    // --- Supabase REST API info ---
+    const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const USERS_TABLE = "users"; // replace with your table name if different
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({ error: "Supabase env vars missing" });
+    }
+
+    // --- Step 1: Get user from Supabase ---
+    const userResp = await fetch(`${SUPABASE_URL}/rest/v1/${USERS_TABLE}?email=eq.${encodeURIComponent(userEmail)}`, {
+      method: "GET",
+      headers: {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      }
+    });
+
+    const users = await userResp.json();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const user = users[0];
+
+    // --- Step 2: Update balance ---
+    const newBalance = parseFloat(user.balance || 0) + parseFloat(amount);
+
+    const updateResp = await fetch(`${SUPABASE_URL}/rest/v1/${USERS_TABLE}?id=eq.${user.id}`, {
+      method: "PATCH",
+      headers: {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify({ balance: newBalance })
+    });
+
+    const updatedUser = await updateResp.json();
+
     return res.status(200).json({
-      message: "Wallet API working",
-      hasUrl: !!supabaseUrl,
-      hasServiceRole: !!supabaseKey
+      message: "Deposit successful",
+      newBalance,
+      updatedUser
     });
+
+  } catch (err) {
+    console.error("Wallet API error:", err);
+    return res.status(500).json({ error: "Error connecting to wallet API" });
   }
-
-  // -------------------
-  // POST: deposit or withdraw
-  // -------------------
-  if (req.method === "POST") {
-    const { email, type, amount } = req.body;
-
-    if (!email || !type || !amount) {
-      return res.status(400).json({ error: "Missing email, type, or amount" });
-    }
-
-    try {
-      // Fetch user first
-      const { data: users, error: fetchError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (fetchError || !users) {
-        throw new Error("User not found");
       }
-
-      let newBalance = parseFloat(users.balance);
-
-      if (type === "deposit") {
-        newBalance += parseFloat(amount);
-      } else if (type === "withdraw") {
-        if (newBalance < amount) {
-          return res.status(400).json({ error: "Insufficient balance" });
-        }
-        newBalance -= parseFloat(amount);
-      } else {
-        return res.status(400).json({ error: "Invalid type" });
-      }
-
-      // Update balance
-      const { data, error } = await supabase
-        .from('users')
-        .update({ balance: newBalance })
-        .eq('email', email)
-        .select();
-
-      if (error) throw error;
-
-      return res.status(200).json({
-        message: `${type} successful`,
-        balance: newBalance,
-        data
-      });
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
-    }
-  }
-
-  // -------------------
-  // Method not allowed
-  // -------------------
-  return res.status(405).json({ error: "Method not allowed" });
-        }
