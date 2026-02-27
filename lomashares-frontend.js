@@ -1,30 +1,28 @@
 /* =====================================================
    LOMASHARES FRONTEND COMPLETE SYSTEM
-   Version: Backend v2 Compatible (Supabase + API)
+   Version: Backend v2 Compatible (LocalStorage / 10 Products)
 ===================================================== */
 
 /* =====================================================
-   SUPABASE INIT
+   DATABASE HELPERS
 ===================================================== */
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
 
-const SUPABASE_URL = "https://lpnnqxalmihxgszoifpa.supabase.co"; // replace with your URL
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";              // replace with your anon key
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* =====================================================
-   AUTH USER HELPERS
-===================================================== */
-function setAuthUser(user) {
-  localStorage.setItem("authUser", JSON.stringify(user));
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
 }
 
 function getAuthUser() {
   return JSON.parse(localStorage.getItem("authUser"));
 }
 
+function setAuthUser(user) {
+  localStorage.setItem("authUser", JSON.stringify(user));
+}
+
 function logout() {
-  supabase.auth.signOut();
   localStorage.removeItem("authUser");
   window.location.href = "index.html";
 }
@@ -36,62 +34,99 @@ function generateReferralCode() {
   return "LOMA" + Math.floor(100000 + Math.random() * 900000);
 }
 
-async function isValidReferral(code) {
+function isValidReferral(code) {
   if (!code) return true;
-  const res = await fetch(`/api/referral.js?code=${code}`);
-  const data = await res.json();
-  return data.valid;
+  return getUsers().some(u => u.myReferralCode === code);
+}
+
+function rewardSponsor(referralCode, amount) {
+  if (!referralCode) return;
+  const users = getUsers();
+  const sponsor = users.find(u => u.myReferralCode === referralCode);
+  if (!sponsor) return;
+
+  const bonus = amount * 0.10; // 10% referral bonus
+  sponsor.balance += bonus;
+  sponsor.transactions.push({
+    type: "Referral Bonus",
+    amount: bonus,
+    date: new Date().toISOString()
+  });
+  saveUsers(users);
 }
 
 /* =====================================================
    AUTHENTICATION
 ===================================================== */
-window.handleRegister = async function () {
+window.handleRegister = function () {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
   const confirmPassword = document.getElementById("confirm-password").value.trim();
   const referral = document.getElementById("referral-code")?.value.trim();
 
-  if (!email || !password || !confirmPassword) return alert("All fields required");
-  if (password !== confirmPassword) return alert("Passwords do not match");
-  if (!(await isValidReferral(referral))) return alert("Invalid referral code");
+  if (!email || !password || !confirmPassword) {
+    alert("All fields required");
+    return;
+  }
 
-  // Supabase signup
-  const { user, error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert(error.message);
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
 
-  // Call backend to create user record
-  const createRes = await fetch('/api/createUser.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, referral })
-  });
+  if (!isValidReferral(referral)) {
+    alert("Invalid referral code");
+    return;
+  }
 
-  const createData = await createRes.json();
-  if (createData.error) return alert(createData.error);
+  const users = getUsers();
+  if (users.some(u => u.email === email)) {
+    alert("Email already exists");
+    return;
+  }
 
-  setAuthUser(createData.user);
+  const newUser = {
+    email,
+    password,
+    referralUsed: referral || null,
+    myReferralCode: generateReferralCode(),
+    balance: 0,
+    totalDeposited: 0,
+    totalWithdrawn: 0,
+    investments: [],
+    transactions: [],
+    deposits: [],
+    withdrawals: [],
+    role: "user",
+    createdAt: new Date().toISOString()
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+
   alert("Registration successful");
   window.location.href = "index.html";
 };
 
-window.handleLogin = async function () {
+window.handleLogin = function () {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
-  const { user, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return alert(error.message);
+  const users = getUsers();
+  const user = users.find(u => u.email === email && u.password === password);
 
-  const res = await fetch(`/api/getUser.js?email=${email}`);
-  const authUser = await res.json();
-  setAuthUser(authUser);
+  if (!user) {
+    alert("Invalid login details");
+    return;
+  }
 
+  setAuthUser(user);
   window.location.href = "dashboard.html";
 };
 
 /* =====================================================
    PAGE PROTECTION
 ===================================================== */
-window.addEventListener("load", async function () {
+window.addEventListener("load", function () {
   const protectedPages = [
     "dashboard.html",
     "investment.html",
@@ -105,8 +140,7 @@ window.addEventListener("load", async function () {
   ];
 
   const page = window.location.pathname.split("/").pop();
-  const auth = getAuthUser();
-  if (protectedPages.includes(page) && !auth) {
+  if (protectedPages.includes(page) && !getAuthUser()) {
     window.location.href = "index.html";
   }
 });
@@ -128,97 +162,179 @@ const PRODUCTS = [
 ];
 
 /* =====================================================
-   INVEST FUNCTION (Calls backend)
+   INVEST FUNCTION
 ===================================================== */
-window.invest = async function (productId) {
+window.invest = function (productId) {
+  const users = getUsers();
   const auth = getAuthUser();
-  if (!auth) return alert("Login required");
+  const user = users.find(u => u.email === auth.email);
+  const product = PRODUCTS.find(p => p.id === productId);
 
-  const res = await fetch('/api/investment.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: auth.email, productId })
+  // Check user balance
+  if (user.balance < product.price) {
+    alert("Insufficient balance");
+    return;
+  }
+
+  // Check if user already invested in this product twice
+  const investedTimes = user.investments.filter(inv => inv.productId === productId).length;
+  if (investedTimes >= 2) {
+    alert("You can only invest in this product twice lifetime");
+    return;
+  }
+
+  // Deduct balance
+  user.balance -= product.price;
+
+  // Add investment
+  const totalReturn = product.price * 2; // 200%
+  const dailyIncome = totalReturn / 30;
+
+  const investment = {
+    productId,
+    price: product.price,
+    daily: dailyIncome,
+    days: 30,
+    startDate: new Date().toISOString(),
+    lastPaid: null,
+    completedDays: 0,
+    active: true
+  };
+
+  user.investments.push(investment);
+
+  // Reward referral sponsor
+  rewardSponsor(user.referralUsed, product.price);
+
+  user.transactions.push({
+    type: "Investment",
+    amount: product.price,
+    date: new Date().toISOString()
   });
 
-  const data = await res.json();
-  if (data.error) return alert(data.error);
+  saveUsers(users);
+  setAuthUser(user);
 
-  setAuthUser(data.user);
   alert("Investment successful");
 };
 
 /* =====================================================
    DAILY PROFIT SYSTEM
 ===================================================== */
-window.processDailyIncome = async function () {
+function processDailyIncome() {
+  const users = getUsers();
   const auth = getAuthUser();
-  if (!auth) return;
+  const user = users.find(u => u.email === auth.email);
+  const now = new Date();
 
-  const res = await fetch('/api/dailyIncome.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: auth.email })
+  user.investments.forEach(inv => {
+    if (!inv.active) return;
+
+    const last = inv.lastPaid ? new Date(inv.lastPaid) : new Date(inv.startDate);
+    const diffHours = (now - last) / (1000 * 60 * 60);
+
+    if (diffHours >= 24 && inv.completedDays < inv.days) {
+      user.balance += inv.daily;
+      inv.completedDays += 1;
+      inv.lastPaid = now.toISOString();
+
+      user.transactions.push({
+        type: "Daily Income",
+        amount: inv.daily,
+        date: now.toISOString()
+      });
+
+      if (inv.completedDays >= inv.days) {
+        inv.active = false;
+      }
+    }
   });
 
-  const data = await res.json();
-  if (!data.user) return;
-
-  setAuthUser(data.user);
-};
+  saveUsers(users);
+  setAuthUser(user);
+}
 
 /* =====================================================
    DEPOSIT
 ===================================================== */
-window.deposit = async function (amount) {
+window.deposit = function (amount) {
+  const users = getUsers();
   const auth = getAuthUser();
-  if (!auth) return alert("Login required");
+  const user = users.find(u => u.email === auth.email);
+  amount = parseFloat(amount);
 
-  const res = await fetch('/api/deposit.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: auth.email, amount: parseFloat(amount) })
+  user.balance += amount;
+  user.totalDeposited += amount;
+
+  user.deposits.push({ amount, date: new Date().toISOString() });
+
+  user.transactions.push({
+    type: "Deposit",
+    amount,
+    date: new Date().toISOString()
   });
 
-  const data = await res.json();
-  if (data.error) return alert(data.error);
+  saveUsers(users);
+  setAuthUser(user);
 
-  setAuthUser(data.user);
   alert("Deposit successful");
 };
 
 /* =====================================================
    WITHDRAW
 ===================================================== */
-window.withdraw = async function (amount) {
+window.withdraw = function (amount) {
+  const users = getUsers();
   const auth = getAuthUser();
-  if (!auth) return alert("Login required");
+  const user = users.find(u => u.email === auth.email);
+  amount = parseFloat(amount);
 
-  const res = await fetch('/api/withdraw.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: auth.email, amount: parseFloat(amount) })
+  if (user.balance < amount) {
+    alert("Insufficient balance");
+    return;
+  }
+
+  user.withdrawals.push({
+    amount,
+    status: "Pending",
+    date: new Date().toISOString()
   });
 
-  const data = await res.json();
-  if (data.error) return alert(data.error);
+  saveUsers(users);
+  setAuthUser(user);
 
-  setAuthUser(data.user);
   alert("Withdrawal request submitted");
 };
 
 /* =====================================================
    ADMIN WITHDRAW APPROVAL
 ===================================================== */
-window.approveWithdrawal = async function (userEmail, index) {
-  const res = await fetch('/api/approveWithdrawal.js', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userEmail, index })
+window.approveWithdrawal = function (userEmail, index) {
+  const users = getUsers();
+  const user = users.find(u => u.email === userEmail);
+  const withdrawal = user.withdrawals[index];
+
+  if (withdrawal.status !== "Pending") return;
+
+  withdrawal.status = "Approved";
+  user.balance -= withdrawal.amount;
+  user.totalWithdrawn += withdrawal.amount;
+
+  user.transactions.push({
+    type: "Withdrawal",
+    amount: withdrawal.amount,
+    date: new Date().toISOString()
   });
 
-  const data = await res.json();
-  if (data.error) return alert(data.error);
+  saveUsers(users);
 };
+
+/* =====================================================
+   DASHBOARD AUTO UPDATE
+===================================================== */
+window.addEventListener("load", function () {
+  processDailyIncome();
+});
 
 /* =====================================================
    DROPDOWN MENU (LOGIN/REGISTER/ABOUT)
@@ -236,10 +352,26 @@ window.addEventListener("click", function (e) {
     menu.style.display = "none";
   }
 });
+// Call this on dashboard load
+function renderProducts() {
+  const container = document.getElementById("products-container");
+  if (!container) return;
 
-/* =====================================================
-   DASHBOARD AUTO UPDATE
-===================================================== */
+  container.innerHTML = ""; // Clear existing content
+
+  PRODUCTS.forEach(product => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <h3>Investment: ₦${product.price.toLocaleString()}</h3>
+      <p>Return: 200% in 30 days</p>
+      <button onclick="invest(${product.id})">Invest</button>
+    `;
+    container.appendChild(card);
+  });
+}
+
 window.addEventListener("load", function () {
-  window.processDailyIncome();
+  processDailyIncome();
+  renderProducts();
 });
