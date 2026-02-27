@@ -1,13 +1,11 @@
 /* =====================================================
    LOMASHARES FRONTEND COMPLETE SYSTEM
-   Version: Backend v2 Compatible
+   Version: Backend v2 Compatible (LocalStorage / 10 Products)
 ===================================================== */
-
 
 /* =====================================================
    DATABASE HELPERS
 ===================================================== */
-
 function getUsers() {
   return JSON.parse(localStorage.getItem("users")) || [];
 }
@@ -29,11 +27,9 @@ function logout() {
   window.location.href = "index.html";
 }
 
-
 /* =====================================================
    REFERRAL SYSTEM
 ===================================================== */
-
 function generateReferralCode() {
   return "LOMA" + Math.floor(100000 + Math.random() * 900000);
 }
@@ -45,33 +41,28 @@ function isValidReferral(code) {
 
 function rewardSponsor(referralCode, amount) {
   if (!referralCode) return;
-
   const users = getUsers();
   const sponsor = users.find(u => u.myReferralCode === referralCode);
   if (!sponsor) return;
 
-  const bonus = amount * 0.10;
-
+  const bonus = amount * 0.10; // 10% referral bonus
   sponsor.balance += bonus;
   sponsor.transactions.push({
     type: "Referral Bonus",
     amount: bonus,
     date: new Date().toISOString()
   });
-
   saveUsers(users);
 }
-
 
 /* =====================================================
    AUTHENTICATION
 ===================================================== */
-
 window.handleRegister = function () {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
   const confirmPassword = document.getElementById("confirm-password").value.trim();
-  const referral = document.getElementById("referral-code").value.trim();
+  const referral = document.getElementById("referral-code")?.value.trim();
 
   if (!email || !password || !confirmPassword) {
     alert("All fields required");
@@ -89,7 +80,6 @@ window.handleRegister = function () {
   }
 
   const users = getUsers();
-
   if (users.some(u => u.email === email)) {
     alert("Email already exists");
     return;
@@ -118,11 +108,9 @@ window.handleRegister = function () {
   window.location.href = "index.html";
 };
 
-
 window.handleLogin = function () {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
-
   const users = getUsers();
   const user = users.find(u => u.email === email && u.password === password);
 
@@ -135,11 +123,9 @@ window.handleLogin = function () {
   window.location.href = "dashboard.html";
 };
 
-
 /* =====================================================
    PAGE PROTECTION
 ===================================================== */
-
 window.addEventListener("load", function () {
   const protectedPages = [
     "dashboard.html",
@@ -154,50 +140,61 @@ window.addEventListener("load", function () {
   ];
 
   const page = window.location.pathname.split("/").pop();
-
-  if (protectedPages.includes(page)) {
-    if (!getAuthUser()) {
-      window.location.href = "index.html";
-    }
+  if (protectedPages.includes(page) && !getAuthUser()) {
+    window.location.href = "index.html";
   }
 });
 
-
 /* =====================================================
-   INVESTMENT PRODUCTS
+   INVESTMENT PRODUCTS (10 Products, 200% return in 30 days)
 ===================================================== */
-
 const PRODUCTS = [
-  { id: 1, price: 1000, daily: 500, days: 3 },
-  { id: 2, price: 3000, daily: 800, days: 5 },
-  { id: 3, price: 7000, daily: 1500, days: 7 },
-  { id: 4, price: 12000, daily: 2000, days: 9 },
-  { id: 5, price: 25000, daily: 5000, days: 7 }
+  { id: 1, price: 3000 },
+  { id: 2, price: 5000 },
+  { id: 3, price: 7000 },
+  { id: 4, price: 10000 },
+  { id: 5, price: 15000 },
+  { id: 6, price: 20000 },
+  { id: 7, price: 30000 },
+  { id: 8, price: 40000 },
+  { id: 9, price: 50000 },
+  { id: 10, price: 100000 }
 ];
-
 
 /* =====================================================
    INVEST FUNCTION
 ===================================================== */
-
 window.invest = function (productId) {
   const users = getUsers();
   const auth = getAuthUser();
   const user = users.find(u => u.email === auth.email);
   const product = PRODUCTS.find(p => p.id === productId);
 
+  // Check user balance
   if (user.balance < product.price) {
     alert("Insufficient balance");
     return;
   }
 
+  // Check if user already invested in this product twice
+  const investedTimes = user.investments.filter(inv => inv.productId === productId).length;
+  if (investedTimes >= 2) {
+    alert("You can only invest in this product twice lifetime");
+    return;
+  }
+
+  // Deduct balance
   user.balance -= product.price;
+
+  // Add investment
+  const totalReturn = product.price * 2; // 200%
+  const dailyIncome = totalReturn / 30;
 
   const investment = {
     productId,
     price: product.price,
-    daily: product.daily,
-    days: product.days,
+    daily: dailyIncome,
+    days: 30,
     startDate: new Date().toISOString(),
     lastPaid: null,
     completedDays: 0,
@@ -206,6 +203,7 @@ window.invest = function (productId) {
 
   user.investments.push(investment);
 
+  // Reward referral sponsor
   rewardSponsor(user.referralUsed, product.price);
 
   user.transactions.push({
@@ -220,16 +218,13 @@ window.invest = function (productId) {
   alert("Investment successful");
 };
 
-
 /* =====================================================
    DAILY PROFIT SYSTEM
 ===================================================== */
-
 function processDailyIncome() {
   const users = getUsers();
   const auth = getAuthUser();
   const user = users.find(u => u.email === auth.email);
-
   const now = new Date();
 
   user.investments.forEach(inv => {
@@ -259,16 +254,13 @@ function processDailyIncome() {
   setAuthUser(user);
 }
 
-
 /* =====================================================
    DEPOSIT
 ===================================================== */
-
 window.deposit = function (amount) {
   const users = getUsers();
   const auth = getAuthUser();
   const user = users.find(u => u.email === auth.email);
-
   amount = parseFloat(amount);
 
   user.balance += amount;
@@ -288,16 +280,13 @@ window.deposit = function (amount) {
   alert("Deposit successful");
 };
 
-
 /* =====================================================
    WITHDRAW
 ===================================================== */
-
 window.withdraw = function (amount) {
   const users = getUsers();
   const auth = getAuthUser();
   const user = users.find(u => u.email === auth.email);
-
   amount = parseFloat(amount);
 
   if (user.balance < amount) {
@@ -317,21 +306,17 @@ window.withdraw = function (amount) {
   alert("Withdrawal request submitted");
 };
 
-
 /* =====================================================
    ADMIN WITHDRAW APPROVAL
 ===================================================== */
-
 window.approveWithdrawal = function (userEmail, index) {
   const users = getUsers();
   const user = users.find(u => u.email === userEmail);
-
   const withdrawal = user.withdrawals[index];
 
   if (withdrawal.status !== "Pending") return;
 
   withdrawal.status = "Approved";
-
   user.balance -= withdrawal.amount;
   user.totalWithdrawn += withdrawal.amount;
 
@@ -344,25 +329,26 @@ window.approveWithdrawal = function (userEmail, index) {
   saveUsers(users);
 };
 
-
 /* =====================================================
    DASHBOARD AUTO UPDATE
 ===================================================== */
-
 window.addEventListener("load", function () {
   processDailyIncome();
 });
 
+/* =====================================================
+   DROPDOWN MENU (LOGIN/REGISTER/ABOUT)
+===================================================== */
 window.toggleMenu = function () {
-    const menu = document.getElementById("dropdownMenu");
-    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  const menu = document.getElementById("dropdownMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 };
 
-window.addEventListener("click", function(e) {
-    const menu = document.getElementById("dropdownMenu");
-    const icon = document.querySelector(".menu-icon");
+window.addEventListener("click", function (e) {
+  const menu = document.getElementById("dropdownMenu");
+  const icon = document.querySelector(".menu-icon");
 
-    if (!icon.contains(e.target) && !menu.contains(e.target)) {
-        menu.style.display = "none";
-    }
+  if (!icon.contains(e.target) && !menu.contains(e.target)) {
+    menu.style.display = "none";
+  }
 });
