@@ -1,220 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lomashares Deposit</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit | LOMASHARES</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+  /* ==================== Reset & base ==================== */
+  body {
+    margin: 0;
+    font-family: 'Helvetica', sans-serif;
+    background: #f5f6fa;
+    color: #111;
+  }
+  a { text-decoration: none; color: inherit; }
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+  /* ==================== Header ==================== */
+  header {
+    background: #1b1b2f;
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
 
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      margin: 0;
-      padding-top: 70px;
-    }
+  /* ==================== Container ==================== */
+  .container {
+    padding: 20px;
+  }
 
-    /* ===== Header ===== */
-    .main-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: linear-gradient(to right, #000000, #0a1f44);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    }
+  /* ==================== Deposit Box ==================== */
+  .deposit-box {
+    background: #fff9f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
 
-    .logo-text {
-      color: #1e90ff;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      text-align: center;
-    }
+  .deposit-box input[type="number"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+    border: 1px solid #e0c097;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+  }
 
-    /* ===== Footer ===== */
-    .footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #0a1f44;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.4);
-    }
+  .quick-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
 
-    .footer a {
-      color: #fff;
-      font-size: 18px;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-weight: 500;
-    }
+  .quick-amounts button {
+    flex: 1 1 30%;
+    padding: 12px;
+    background: linear-gradient(45deg,#ffd700,#ffb700);
+    border: none;
+    border-radius: 10px;
+    color: #111;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+  }
 
-    .footer a i {
-      font-size: 20px;
-      margin-bottom: 2px;
-    }
+  .quick-amounts button:hover {
+    transform: scale(1.05);
+  }
 
-    /* ===== Deposit Container ===== */
-    .deposit-container {
-      max-width: 400px;
-      margin: 20px auto 80px;
-      padding: 20px;
-      background: #111;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    }
+  .deposit-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg,#ffd700,#ffb700);
+    color: #111;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+  }
 
-    .deposit-container h2 {
-      text-align: center;
-      color: #00bfff;
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
+  .deposit-btn:hover {
+    transform: scale(1.03);
+  }
 
-    /* Input Field */
-    .deposit-container input {
-      width: 100%;
-      padding: 15px 20px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      background-color: #222;
-      color: #fff;
-    }
+  /* ==================== Footer ==================== */
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #1b1b2f;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    color: #fff;
+  }
 
-    /* Shortcut Buttons */
-    .shortcuts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+  footer a {
+    text-align: center;
+    flex: 1;
+    color: #fff;
+    font-size: 0.9rem;
+  }
 
-    .shortcuts button {
-      flex: 1 1 30%;
-      padding: 12px;
-      background: linear-gradient(90deg, #00bfff, #004080);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+  footer a i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
 
-    .shortcuts button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,191,255,0.4);
-    }
-
-    /* Deposit Button */
-    #depositBtn {
-      width: 100%;
-      padding: 15px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, #1e90ff, #004080);
-      color: #fff;
-      font-size: 18px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    #depositBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(30,144,255,0.4);
-    }
-  </style>
+</style>
 </head>
 <body>
-  <!-- Header -->
-  <header class="main-header">
-    <div class="logo-text">LOMASHARES</div>
-  </header>
 
-  <!-- Deposit Container -->
-  <div class="deposit-container">
-    <h2>Deposit Funds</h2>
-    <input type="number" id="depositAmount" placeholder="Enter amount">
+<header>LOMASHARES</header>
 
-    <div class="shortcuts">
-      <button onclick="setShortcut(1000)">#1000</button>
-      <button onclick="setShortcut(5000)">#5000</button>
-      <button onclick="setShortcut(10000)">#10000</button>
-      <button onclick="setShortcut(30000)">#30000</button>
-      <button onclick="setShortcut(50000)">#50000</button>
-      <button onclick="setShortcut(100000)">#100000</button>
+<div class="container">
+  <div class="deposit-box">
+    <input type="number" id="depositAmount" placeholder="Enter deposit amount" min="1000">
+
+    <div class="quick-amounts">
+      <button data-amount="1000">#1000</button>
+      <button data-amount="5000">#5000</button>
+      <button data-amount="10000">#10000</button>
+      <button data-amount="30000">#30000</button>
+      <button data-amount="50000">#50000</button>
+      <button data-amount="100000">#100000</button>
     </div>
 
-    <button id="depositBtn">Deposit Now</button>
+    <button class="deposit-btn" id="depositBtn">Deposit</button>
   </div>
+</div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <a href="dashboard.html"><i class="fa fa-home"></i>Home</a>
-    <a href="investment.html"><i class="fa fa-money-bill-wave"></i>Invest</a>
-    <a href="team.html"><i class="fa fa-users"></i>Team</a>
-    <a href="profile.html"><i class="fa fa-user"></i>Profile</a>
-  </div>
+<footer>
+  <a href="dashboard.html"><i class="fas fa-home"></i>Home</a>
+  <a href="investment.html"><i class="fas fa-chart-line"></i>Invest</a>
+  <a href="team.html"><i class="fas fa-users"></i>Team</a>
+  <a href="profile.html"><i class="fas fa-user"></i>Profile</a>
+</footer>
 
-  <script type="module">
-    import { getAuthUser } from './lomashares-frontend.js';
+<script>
+  // ==================== Quick Amount Buttons ====================
+  const quickBtns = document.querySelectorAll('.quick-amounts button');
+  const depositInput = document.getElementById('depositAmount');
 
-    const depositInput = document.getElementById("depositAmount");
-    const depositBtn = document.getElementById("depositBtn");
-
-    function setShortcut(amount) {
-      depositInput.value = amount;
-    }
-
-    depositBtn.addEventListener("click", async () => {
-      const amount = parseFloat(depositInput.value);
-      if (!amount || amount <= 0) return alert("Enter a valid amount");
-
-      const authUser = getAuthUser();
-      if (!authUser) return alert("User not logged in");
-
-      try {
-        const resp = await fetch("/api/wallet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, userEmail: authUser.email })
-        });
-
-        const data = await resp.json();
-
-        if (resp.ok) {
-          alert(`Deposit successful! New balance: #${data.newBalance}`);
-          depositInput.value = "";
-        } else {
-          alert(data.error || "Deposit failed");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Error connecting to wallet API");
-      }
+  quickBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      depositInput.value = btn.getAttribute('data-amount');
     });
-  </script>
+  });
+
+  // ==================== Deposit Button ====================
+  const depositBtn = document.getElementById('depositBtn');
+  depositBtn.addEventListener('click', async () => {
+    const amount = parseFloat(depositInput.value);
+    if (!amount || amount < 1000) return alert("Enter a valid amount");
+
+    // Call deposit function from lomashares-frontend.js
+    if (typeof deposit === "function") {
+      await deposit(amount);
+      depositInput.value = ""; // clear input
+    } else {
+      alert("Deposit function not loaded");
+    }
+  });
+
+  // ==================== Auto redirect if not logged in ====================
+  const auth = JSON.parse(localStorage.getItem('authUser'));
+  if (!auth) window.location.href = "index.html";
+</script>
+
 </body>
-  </html>
+                             </html>
