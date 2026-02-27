@@ -1,10 +1,10 @@
 /* =====================================================
    LOMASHARES FRONTEND COMPLETE SYSTEM
-   Version: Backend v2 Compatible (LocalStorage / 10 Products)
+   Version: Backend v2 Compatible (Supabase Wallet API)
 ===================================================== */
 
 /* =====================================================
-   DATABASE HELPERS
+   DATABASE HELPERS (LocalStorage fallback)
 ===================================================== */
 function getUsers() {
   return JSON.parse(localStorage.getItem("users")) || [];
@@ -170,8 +170,6 @@ window.invest = function (productId) {
   const user = users.find(u => u.email === auth.email);
   const product = PRODUCTS.find(p => p.id === productId);
 
-  if (!product) return;
-
   if (user.balance < product.price) {
     alert("Insufficient balance");
     return;
@@ -185,7 +183,7 @@ window.invest = function (productId) {
 
   user.balance -= product.price;
 
-  const totalReturn = product.price * 2;
+  const totalReturn = product.price * 2; 
   const dailyIncome = totalReturn / 30;
 
   const investment = {
@@ -224,8 +222,6 @@ function processDailyIncome() {
   const user = users.find(u => u.email === auth.email);
   const now = new Date();
 
-  if (!user) return;
-
   user.investments.forEach(inv => {
     if (!inv.active) return;
 
@@ -254,31 +250,46 @@ function processDailyIncome() {
 }
 
 /* =====================================================
-   DEPOSIT (Connected to wallet API)
+   DEPOSIT (Integrated with /api/wallet)
 ===================================================== */
 window.deposit = async function (amount) {
-  const auth = getAuthUser();
-  if (!auth) return alert("User not logged in");
-
   try {
+    const input = document.getElementById("deposit-amount");
+    if (!amount) {
+      amount = parseFloat(input.value.trim());
+    }
+    if (!amount || isNaN(amount) || amount <= 0) {
+      alert("Enter a valid amount");
+      return;
+    }
+
+    const user = getAuthUser();
     const response = await fetch("/api/wallet", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, userEmail: auth.email })
+      body: JSON.stringify({ amount, userEmail: user.email })
     });
 
-    const result = await response.json();
+    const data = await response.json();
 
-    if (result.error) return alert(result.error);
-
-    // Update local balance
-    auth.balance = result.balance;
-    setAuthUser(auth);
-    alert("Deposit successful");
+    if (response.ok) {
+      user.balance = data.balance; // Update balance from API
+      setAuthUser(user);
+      alert("Deposit successful: ₦" + amount.toLocaleString());
+      input.value = "";
+    } else {
+      alert(data.error || "Deposit failed");
+    }
   } catch (err) {
     console.error(err);
     alert("Error connecting to wallet API");
   }
+};
+
+// Quick amount buttons
+window.setQuickAmount = function (amount) {
+  const input = document.getElementById("deposit-amount");
+  if (input) input.value = amount;
 };
 
 /* =====================================================
@@ -331,40 +342,15 @@ window.approveWithdrawal = function (userEmail, index) {
 };
 
 /* =====================================================
-   RENDER PRODUCTS WITH DAILY INCOME
-===================================================== */
-function renderProducts() {
-  const container = document.getElementById("products-container");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  PRODUCTS.forEach(product => {
-    const totalReturn = product.price * 2;
-    const dailyIncome = totalReturn / 30;
-
-    const card = document.createElement("div");
-    card.className = "product-card";
-    card.innerHTML = `
-      <h3>Investment: ₦${product.price.toLocaleString()}</h3>
-      <p>Return: 200% in 30 days</p>
-      <p>Daily Income: ₦${dailyIncome.toLocaleString()}</p>
-      <button onclick="invest(${product.id})">Invest</button>
-    `;
-    container.appendChild(card);
-  });
-}
-
-/* =====================================================
-   DASHBOARD LOAD
+   DASHBOARD AUTO UPDATE
 ===================================================== */
 window.addEventListener("load", function () {
   processDailyIncome();
-  renderProducts();
+  renderProducts(); // investment cards
 });
 
 /* =====================================================
-   DROPDOWN MENU
+   DROPDOWN MENU (LOGIN/REGISTER/ABOUT)
 ===================================================== */
 window.toggleMenu = function () {
   const menu = document.getElementById("dropdownMenu");
@@ -379,3 +365,24 @@ window.addEventListener("click", function (e) {
     menu.style.display = "none";
   }
 });
+
+/* =====================================================
+   RENDER PRODUCTS ON DASHBOARD
+===================================================== */
+function renderProducts() {
+  const container = document.getElementById("products-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+  PRODUCTS.forEach(product => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    card.innerHTML = `
+      <h3>Investment: ₦${product.price.toLocaleString()}</h3>
+      <p>Return: 200% in 30 days</p>
+      <p>Daily Income: ₦${(product.price * 2 / 30).toLocaleString()}</p>
+      <button onclick="invest(${product.id})">Invest</button>
+    `;
+    container.appendChild(card);
+  });
+   }
