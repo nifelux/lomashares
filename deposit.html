@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Deposit | LomaShares</title>
 
-  <!-- Paystack Inline -->
+  <!-- Paystack Inline (must load) -->
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
   <style>
@@ -27,10 +27,9 @@
     }
     .title{font-size:18px;font-weight:800;margin:0 0 10px}
     .sub{margin:0 0 16px;color:rgba(234,242,255,.8);font-size:13px;line-height:1.4}
-    .row{display:flex;gap:10px;align-items:center}
     .amountBox{
       width:100%;background:#020817;border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;padding:14px 14px;
+      border-radius:14px;padding:14px;
       display:flex;align-items:center;gap:10px
     }
     .naira{
@@ -44,10 +43,7 @@
       color:#eaf2ff;font-size:18px;font-weight:800
     }
     input::placeholder{color:rgba(234,242,255,.45);font-weight:600}
-    .grid{
-      display:grid;grid-template-columns:repeat(3,1fr);
-      gap:10px;margin-top:14px
-    }
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
     .qbtn{
       padding:12px 10px;border:none;border-radius:14px;
       cursor:pointer;font-weight:900;
@@ -78,7 +74,10 @@
 
 <body>
   <div class="header">LOMASHARES</div>
-
+<script>
+  alert("Script Loaded");
+  alert("Deposit button clicked");
+</script>
   <div class="wrap">
     <div class="card">
       <p class="title">Deposit Funds</p>
@@ -98,7 +97,7 @@
         <button class="qbtn" data-amt="100000">₦100,000</button>
       </div>
 
-      <button class="paybtn" id="payBtn">Pay with Paystack</button>
+      <button class="paybtn" id="payBtn" type="button">Pay with Paystack</button>
 
       <div class="note">
         ✅ Your wallet is credited only after Paystack verifies the payment.<br/>
@@ -115,69 +114,90 @@
   </div>
 
   <script>
-    // ====== SET YOUR PAYSTACK PUBLIC KEY HERE ======
-    const PAYSTACK_PUBLIC_KEY = "pk_live_cd8547f6b4270551729c247d8d31635691c39a08"; // ✅ you gave this
-
-    // Get logged in user (you store it in localStorage as authUser)
-    const authUser = JSON.parse(localStorage.getItem("authUser") || "null");
-    if (!authUser || !authUser.email) {
-      window.location.href = "index.html";
-    }
-
-    const amountEl = document.getElementById("amount");
-    document.querySelectorAll(".qbtn").forEach(btn => {
-      btn.addEventListener("click", () => amountEl.value = btn.dataset.amt);
-    });
+    // ✅ Put your Paystack PUBLIC key here (pk_live... or pk_test...)
+    const PAYSTACK_PUBLIC_KEY = "pk_live_cd8547f6b4270551729c247d8d31635691c39a08";
 
     function makeRef() {
-      return "LS-" + Date.now() + "-" + Math.floor(Math.random()*100000);
+      return "LS-" + Date.now() + "-" + Math.floor(Math.random() * 100000);
     }
 
-    async function verifyAndCredit(reference, amount) {
-      // ✅ Backend verifies Paystack AND credits wallet
+    async function verifyAndCredit(reference, amount, userEmail) {
       const res = await fetch("/api/deposit-verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reference,
-          amount,
-          userEmail: authUser.email
-        })
+        body: JSON.stringify({ reference, amount, userEmail })
       });
       return res.json();
     }
 
-    document.getElementById("payBtn").addEventListener("click", () => {
-      const amount = Number(amountEl.value);
-      if (!amount || amount < 1000) return alert("Minimum deposit is ₦1,000");
+    document.addEventListener("DOMContentLoaded", () => {
+      const authUser = JSON.parse(localStorage.getItem("authUser") || "null");
+      if (!authUser || !authUser.email) {
+        alert("Please login first");
+        window.location.href = "index.html";
+        return;
+      }
 
-      const ref = makeRef();
+      const amountEl = document.getElementById("amount");
+      const payBtn = document.getElementById("payBtn");
 
-      const handler = PaystackPop.setup({
-        key: PAYSTACK_PUBLIC_KEY,
-        email: authUser.email,
-        amount: amount * 100, // kobo
-        currency: "NGN",
-        ref,
-        callback: async function(resp) {
-          try {
-            const data = await verifyAndCredit(resp.reference, amount);
-            if (data.error) return alert(data.error);
-
-            alert("Deposit successful! New balance: ₦" + Number(data.newBalance).toLocaleString());
-            amountEl.value = "";
-          } catch (e) {
-            console.error(e);
-            alert("Deposit verification failed. Please contact support.");
-          }
-        },
-        onClose: function() {
-          alert("Payment cancelled");
-        }
+      // Wire quick buttons
+      document.querySelectorAll(".qbtn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          amountEl.value = btn.dataset.amt;
+        });
       });
 
-      handler.openIframe();
+      // Wire deposit button
+      payBtn.addEventListener("click", async () => {
+        // 1) Confirm Paystack script is loaded
+        if (typeof PaystackPop === "undefined") {
+          alert("Paystack failed to load. Check network / adblocker.");
+          return;
+        }
+
+        // 2) Validate amount
+        const amount = Number(amountEl.value);
+        if (!amount || amount < 1000) {
+          alert("Minimum deposit is ₦1,000");
+          return;
+        }
+
+        // 3) Open Paystack
+        const ref = makeRef();
+        payBtn.disabled = true;
+
+        const handler = PaystackPop.setup({
+          key: PAYSTACK_PUBLIC_KEY,
+          email: authUser.email,
+          amount: amount * 100, // kobo
+          currency: "NGN",
+          ref,
+          callback: async function(resp) {
+            try {
+              const data = await verifyAndCredit(resp.reference, amount, authUser.email);
+              if (data.error) {
+                alert(data.error);
+                return;
+              }
+              alert("Deposit successful! New balance: ₦" + Number(data.newBalance).toLocaleString());
+              amountEl.value = "";
+            } catch (e) {
+              console.error(e);
+              alert("Deposit verification failed. Try again.");
+            } finally {
+              payBtn.disabled = false;
+            }
+          },
+          onClose: function() {
+            payBtn.disabled = false;
+            alert("Payment cancelled");
+          }
+        });
+
+        handler.openIframe();
+      });
     });
   </script>
 </body>
-      </html>
+          </html>
