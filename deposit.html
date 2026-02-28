@@ -1,196 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deposit | Lomashares</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-<style>
-  /* ====== MOBILE PREMIUM STYLE ====== */
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f5f8fa;
-    color: #111;
-  }
-  header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 0;
-    background: linear-gradient(90deg, #0d6efd, #6610f2);
-    color: #fff;
-    font-weight: bold;
-    font-size: 20px;
-    position: sticky;
-    top: 0;
-  }
-  .container {
-    padding: 15px;
-  }
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-  }
-  .input-group input {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .quick-amounts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .quick-amounts button {
-    flex: 1 1 30%;
-    padding: 12px 0;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    background: gold;
-    color: #000;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .quick-amounts button:hover {
-    background: #ffcc00;
-  }
-  .deposit-btn {
-    padding: 15px;
-    width: 100%;
-    font-size: 18px;
-    font-weight: bold;
-    background: #0d6efd;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .deposit-btn:hover {
-    background: #0056b3;
-  }
-  footer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0;
-    position: sticky;
-    bottom: 0;
-    background: #111;
-    color: #fff;
-    font-size: 14px;
-  }
-  footer a {
-    text-decoration: none;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  footer a i {
-    font-size: 18px;
-    margin-bottom: 3px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deposit | LomaShares</title>
+
+  <!-- Paystack Inline -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
+  <style>
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    body{margin:0;background:#071428;color:#eaf2ff}
+    .header{
+      position:sticky;top:0;z-index:10;
+      height:60px;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(90deg,#050b16,#0b2a59);
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+      font-weight:900;letter-spacing:2px;color:#7db7ff
+    }
+    .wrap{padding:16px 14px 92px;max-width:520px;margin:0 auto}
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;padding:18px;
+      box-shadow:0 14px 40px rgba(0,0,0,.35);
+    }
+    .title{font-size:18px;font-weight:800;margin:0 0 10px}
+    .sub{margin:0 0 16px;color:rgba(234,242,255,.8);font-size:13px;line-height:1.4}
+    .row{display:flex;gap:10px;align-items:center}
+    .amountBox{
+      width:100%;background:#020817;border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;padding:14px 14px;
+      display:flex;align-items:center;gap:10px
+    }
+    .naira{
+      width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg,#f7d56a,#caa33a);
+      display:flex;align-items:center;justify-content:center;
+      color:#121212;font-weight:900
+    }
+    input{
+      width:100%;border:none;outline:none;background:transparent;
+      color:#eaf2ff;font-size:18px;font-weight:800
+    }
+    input::placeholder{color:rgba(234,242,255,.45);font-weight:600}
+    .grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:10px;margin-top:14px
+    }
+    .qbtn{
+      padding:12px 10px;border:none;border-radius:14px;
+      cursor:pointer;font-weight:900;
+      color:#0b1220;background:linear-gradient(135deg,#f7d56a,#caa33a);
+      box-shadow:0 10px 22px rgba(202,163,58,.18);
+    }
+    .qbtn:active{transform:scale(.98)}
+    .paybtn{
+      width:100%;margin-top:16px;padding:14px 12px;border:none;border-radius:16px;
+      background:linear-gradient(90deg,#1b6bff,#0b2a59);
+      color:#fff;font-weight:900;font-size:16px;cursor:pointer;
+      box-shadow:0 18px 35px rgba(27,107,255,.22);
+    }
+    .paybtn[disabled]{opacity:.55;cursor:not-allowed}
+    .note{
+      margin-top:12px;font-size:12px;color:rgba(234,242,255,.75);
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      padding:10px;border-radius:14px;line-height:1.45
+    }
+    .footer{
+      position:fixed;left:0;right:0;bottom:0;z-index:10;
+      height:70px;background:#050b16;border-top:1px solid rgba(255,255,255,.08);
+      display:flex;justify-content:space-around;align-items:center
+    }
+    .fitem{color:rgba(234,242,255,.85);text-decoration:none;font-size:12px;font-weight:800}
+  </style>
 </head>
+
 <body>
+  <div class="header">LOMASHARES</div>
 
-<header>Lomashares</header>
+  <div class="wrap">
+    <div class="card">
+      <p class="title">Deposit Funds</p>
+      <p class="sub">Choose a quick amount or enter a custom amount. Payment is processed securely via Paystack.</p>
 
-<div class="container">
-  <div class="input-group">
-    <label for="deposit-amount">Enter Amount</label>
-    <input type="number" id="deposit-amount" placeholder="₦0">
+      <div class="amountBox">
+        <div class="naira">₦</div>
+        <input id="amount" type="number" inputmode="numeric" placeholder="Enter amount e.g 5000" />
+      </div>
+
+      <div class="grid">
+        <button class="qbtn" data-amt="1000">₦1,000</button>
+        <button class="qbtn" data-amt="5000">₦5,000</button>
+        <button class="qbtn" data-amt="10000">₦10,000</button>
+        <button class="qbtn" data-amt="30000">₦30,000</button>
+        <button class="qbtn" data-amt="50000">₦50,000</button>
+        <button class="qbtn" data-amt="100000">₦100,000</button>
+      </div>
+
+      <button class="paybtn" id="payBtn">Pay with Paystack</button>
+
+      <div class="note">
+        ✅ Your wallet is credited only after Paystack verifies the payment.<br/>
+        ⚠️ If you close the payment window, your balance will not change.
+      </div>
+    </div>
   </div>
 
-  <div class="quick-amounts">
-    <button onclick="setQuickAmount(1000)">₦1,000</button>
-    <button onclick="setQuickAmount(5000)">₦5,000</button>
-    <button onclick="setQuickAmount(10000)">₦10,000</button>
-    <button onclick="setQuickAmount(30000)">₦30,000</button>
-    <button onclick="setQuickAmount(50000)">₦50,000</button>
-    <button onclick="setQuickAmount(100000)">₦100,000</button>
+  <div class="footer">
+    <a class="fitem" href="dashboard.html">Home</a>
+    <a class="fitem" href="investment.html">Invest</a>
+    <a class="fitem" href="team.html">Team</a>
+    <a class="fitem" href="profile.html">Profile</a>
   </div>
 
-  <button class="deposit-btn" onclick="handleDeposit()">Deposit</button>
-</div>
+  <script>
+    // ====== SET YOUR PAYSTACK PUBLIC KEY HERE ======
+    const PAYSTACK_PUBLIC_KEY = "pk_live_cd8547f6b4270551729c247d8d31635691c39a08"; // ✅ you gave this
 
-<footer>
-  <a href="index.html"><i class="fas fa-home"></i>Home</a>
-  <a href="investment.html"><i class="fas fa-chart-line"></i>Invest</a>
-  <a href="team.html"><i class="fas fa-users"></i>Team</a>
-  <a href="profile.html"><i class="fas fa-user"></i>Profile</a>
-</footer>
-
-<script src="https://js.paystack.co/v1/inline.js"></script>
-<script>
-  const PAYSTACK_PUBLIC_KEY = "YOUR_PAYSTACK_PUBLIC_KEY_HERE";
-
-  function setQuickAmount(value) {
-    document.getElementById('deposit-amount').value = value;
-  }
-
-  async function handleDeposit() {
-    const amountInput = document.getElementById('deposit-amount');
-    let amount = parseFloat(amountInput.value);
-    if (isNaN(amount) || amount <= 0) {
-      alert("Enter a valid amount");
-      return;
-    }
-
-    const user = JSON.parse(localStorage.getItem('authUser'));
-    if (!user) {
-      alert("User not logged in");
+    // Get logged in user (you store it in localStorage as authUser)
+    const authUser = JSON.parse(localStorage.getItem("authUser") || "null");
+    if (!authUser || !authUser.email) {
       window.location.href = "index.html";
-      return;
     }
 
-    // Convert amount to kobo for Paystack
-    const amountKobo = amount * 100;
-
-    // Initialize Paystack payment
-    const handler = PaystackPop.setup({
-      key: PAYSTACK_PUBLIC_KEY,
-      email: user.email,
-      amount: amountKobo,
-      currency: "NGN",
-      onClose: function() {
-        alert('Payment was not completed.');
-      },
-      callback: async function(response) {
-        // On successful payment, call wallet API
-        try {
-          const res = await fetch("/api/wallet", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount, userEmail: user.email, reference: response.reference })
-          });
-
-          const data = await res.json();
-          if (data.error) {
-            alert("Wallet update failed: " + data.error);
-          } else {
-            alert("Deposit successful!");
-            // Update local storage
-            user.balance = data.newBalance;
-            localStorage.setItem("authUser", JSON.stringify(user));
-          }
-        } catch (err) {
-          alert("Error connecting to wallet API");
-        }
-      }
+    const amountEl = document.getElementById("amount");
+    document.querySelectorAll(".qbtn").forEach(btn => {
+      btn.addEventListener("click", () => amountEl.value = btn.dataset.amt);
     });
-    handler.openIframe();
-  }
-</script>
 
+    function makeRef() {
+      return "LS-" + Date.now() + "-" + Math.floor(Math.random()*100000);
+    }
+
+    async function verifyAndCredit(reference, amount) {
+      // ✅ Backend verifies Paystack AND credits wallet
+      const res = await fetch("/api/deposit-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reference,
+          amount,
+          userEmail: authUser.email
+        })
+      });
+      return res.json();
+    }
+
+    document.getElementById("payBtn").addEventListener("click", () => {
+      const amount = Number(amountEl.value);
+      if (!amount || amount < 1000) return alert("Minimum deposit is ₦1,000");
+
+      const ref = makeRef();
+
+      const handler = PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: authUser.email,
+        amount: amount * 100, // kobo
+        currency: "NGN",
+        ref,
+        callback: async function(resp) {
+          try {
+            const data = await verifyAndCredit(resp.reference, amount);
+            if (data.error) return alert(data.error);
+
+            alert("Deposit successful! New balance: ₦" + Number(data.newBalance).toLocaleString());
+            amountEl.value = "";
+          } catch (e) {
+            console.error(e);
+            alert("Deposit verification failed. Please contact support.");
+          }
+        },
+        onClose: function() {
+          alert("Payment cancelled");
+        }
+      });
+
+      handler.openIframe();
+    });
+  </script>
 </body>
-</html>
+      </html>
