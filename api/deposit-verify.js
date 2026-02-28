@@ -11,30 +11,22 @@ export default async function handler(req, res) {
   const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
 
   try {
-    const { reference, amount, userEmail } = req.body || {};
-    if (!reference || !amount || !userEmail) {
-      return res.status(400).json({ error: "Missing reference, amount or userEmail" });
-    }
+    const { reference } = req.body || {};
+    if (!reference) return res.status(400).json({ error: "Missing reference" });
 
-    // 1) Verify Paystack transaction
+    // Verify on Paystack
     const r = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
-      headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` }
+      headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` },
     });
-
     const v = await r.json();
-    if (!v.status) return res.status(400).json({ error: "Paystack verification failed" });
 
-    const trx = v.data;
+    if (!v.status) return res.status(400).json({ error: "Verification failed", raw: v });
+    if (v.data.status !== "success") return res.status(400).json({ error: "Payment not successful" });
 
-    // Must be successful + amount must match
-    const paidAmount = Number(trx.amount) / 100; // convert from kobo
-    if (trx.status !== "success") return res.status(400).json({ error: "Payment not successful" });
-    if (paidAmount !== Number(amount)) return res.status(400).json({ error: "Amount mismatch" });
-    if ((trx.customer?.email || "").toLowerCase() !== String(userEmail).toLowerCase()) {
-      return res.status(400).json({ error: "Email mismatch" });
-    }
+    const email = (v.data.customer?.email || "").toLowerCase();
+    const amount = Number(v.data.amount) / 100; // convert from kobo
 
-    // 2) Prevent double-credit (idempotency)
+    // Prevent double-credit (important!)
     const { data: existing } = await supabase
       .from("transactions")
       .select("id")
@@ -42,44 +34,42 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     if (existing) {
-      return res.status(200).json({ message: "Already credited", newBalance: null });
+      return res.status(200).json({ message: "Already credited" });
     }
 
-    // 3) Fetch user
+    // Get user
     const { data: userRow, error: uErr } = await supabase
       .from("users")
-      .select("id,email,balance")
-      .eq("email", userEmail)
+      .select("id, email, balance")
+      .ilike("email", email)
       .single();
 
-    if (uErr || !userRow) return res.status(404).json({ error: "User not found" });
+    if (uErr || !userRow) return res.status(404).json({ error: "User not found in database" });
 
-    const newBalance = Number(userRow.balance || 0) + Number(amount);
+    const newBalance = Number(userRow.balance || 0) + amount;
 
-    // 4) Update balance
+    // Update balance
     const { error: bErr } = await supabase
       .from("users")
       .update({ balance: newBalance })
       .eq("id", userRow.id);
 
-    if (bErr) return res.status(500).json({ error: "Failed to update balance" });
+    if (bErr) return res.status(500).json({ error: "Failed to update wallet" });
 
-    // 5) Log transaction
-    const { error: tErr } = await supabase.from("transactions").insert([{
+    // Log transaction
+    await supabase.from("transactions").insert([{
       user_id: userRow.id,
-      user_email: userEmail,
+      user_email: userRow.email,
       type: "Deposit",
-      amount: Number(amount),
+      amount,
       reference,
       status: "success",
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     }]);
-
-    if (tErr) return res.status(500).json({ error: "Failed to log transaction" });
 
     return res.status(200).json({ message: "Deposit credited", newBalance });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Server error" });
   }
-        }
+}
