@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Deposit Success</title>
+</head>
+<body style="font-family:system-ui;padding:20px;">
+  <h2>Confirming your deposit...</h2>
+  <p>Please wait. Do not close this page.</p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const reference = params.get("reference");
+
+    async function verify() {
+      if (!reference) {
+        document.body.innerHTML = "<h3>Missing reference. Please contact support.</h3>";
+        return;
+      }
+
+      const res = await fetch("/api/deposit-verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference })
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        document.body.innerHTML = "<h3>Deposit verification failed</h3><p>" + data.error + "</p>";
+        return;
+      }
+
+      document.body.innerHTML = `
+        <h2>Deposit Successful ✅</h2>
+        <p>Your wallet has been updated.</p>
+        <button style="padding:12px 16px;border:none;border-radius:10px;background:#0d6efd;color:#fff;font-weight:800"
+          onclick="location.href='dashboard.html'">Go to Dashboard</button>
+      `;
+    }
+
+    verify();
+  </script>
+</body>
+</html>
