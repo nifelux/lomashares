@@ -94,7 +94,7 @@
         <button class="qbtn" data-amt="100000">₦100,000</button>
       </div>
 
-      <button class="paybtn" id="payBtn" type="button" onclick="testClick()">Pay with Paystack</button>
+      <button class="paybtn" id="payBtn" type="button" onclick="handleDepositClick()">Pay with Paystack</button>
       <div class="note">
         ✅ Your wallet is credited only after Paystack verifies the payment.<br/>
         ⚠️ If you close the payment window, your balance will not change.
@@ -109,18 +109,80 @@
     <a class="fitem" href="profile.html">Profile</a>
   </div>
 <script src="https://js.paystack.co/v1/inline.js"></script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  const PAYSTACK_PUBLIC_KEY = "pk_live_cd8547f6b4270551729c247d8d31635691c39a08";
 
-  const payBtn = document.getElementById("payBtn");
+  function getUserEmail() {
+    const au = localStorage.getItem("authUser");
+    if (!au) return null;
+    try {
+      const u = JSON.parse(au);
+      return u?.email || null;
+    } catch {
+      return null;
+    }
+  }
 
-  payBtn.addEventListener("click", function () {
-    alert("Button connected ✅");
-  });
+  function makeRef() {
+    return "LS-" + Date.now() + "-" + Math.floor(Math.random() * 100000);
+  }
 
-});
-</script>
+  async function verifyAndCredit(reference, amount, userEmail) {
+    const res = await fetch("/api/deposit-verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reference, amount, userEmail })
+    });
+    return res.json();
+  }
+
+  window.handleDepositClick = function () {
+    const email = getUserEmail();
+    if (!email) {
+      alert("Login not detected. Please login again.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    const amountEl = document.getElementById("amount");
+    const amount = Number(amountEl?.value);
+
+    if (!amount || amount < 1000) {
+      alert("Minimum deposit is ₦1,000");
+      return;
+    }
+
+    if (typeof PaystackPop === "undefined") {
+      alert("Paystack failed to load. Check your network/adblocker.");
+      return;
+    }
+
+    const ref = makeRef();
+
+    PaystackPop.setup({
+      key: PAYSTACK_PUBLIC_KEY,
+      email,
+      amount: amount * 100,
+      currency: "NGN",
+      ref,
+      callback: async function (resp) {
+        try {
+          const data = await verifyAndCredit(resp.reference, amount, email);
+          if (data.error) return alert(data.error);
+
+          alert("Deposit successful! New balance: ₦" + Number(data.newBalance).toLocaleString());
+          amountEl.value = "";
+        } catch (e) {
+          console.error(e);
+          alert("Deposit verification failed. Try again.");
+        }
+      },
+      onClose: function () {
+        alert("Payment cancelled");
+      }
+    }).openIframe();
+  };
+      </script>
   <script>
     // ✅ Put your Paystack PUBLIC key here (pk_live... or pk_test...)
     const PAYSTACK_PUBLIC_KEY = "pk_live_cd8547f6b4270551729c247d8d31635691c39a08";
