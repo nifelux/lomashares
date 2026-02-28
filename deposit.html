@@ -108,10 +108,18 @@
     <a class="fitem" href="team.html">Team</a>
     <a class="fitem" href="profile.html">Profile</a>
   </div>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
 <script>
-function testClick() {
-  alert("Deposit button is working ✅");
-}
+document.addEventListener("DOMContentLoaded", function () {
+
+  const payBtn = document.getElementById("payBtn");
+
+  payBtn.addEventListener("click", function () {
+    alert("Button connected ✅");
+  });
+
+});
 </script>
   <script>
     // ✅ Put your Paystack PUBLIC key here (pk_live... or pk_test...)
