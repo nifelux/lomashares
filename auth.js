@@ -5,61 +5,37 @@ const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// -------- Register ----------
-window.handleRegister = async function () {
-  const email = document.getElementById("email")?.value.trim();
-  const password = document.getElementById("password")?.value.trim();
-  const confirm = document.getElementById("confirm-password")?.value.trim();
-  const referral = document.getElementById("referral-code")?.value.trim() || null;
+// Single guard to prevent redirect loops
+export async function guard({ isPublicPage }) {
+  const page = (location.pathname.split("/").pop() || "").toLowerCase();
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!email || !password || !confirm) return alert("All fields required");
-  if (password !== confirm) return alert("Passwords do not match");
-
-  // Sign up (Supabase Auth)
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) return alert(error.message);
-
-  // Save referral used (optional) into profiles.referred_by
-  if (referral && data?.user?.id) {
-    await fetch("/api/referral", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: data.user.id, referral_code: referral })
-    });
+  if (isPublicPage) {
+    if (session && page !== "dashboard.html") location.replace("dashboard.html");
+    return;
   }
 
-  alert("Registration successful. Please login.");
-  window.location.href = "index.html";
-};
+  if (!session && page !== "index.html") location.replace("index.html");
+}
 
-// -------- Login ----------
-window.handleLogin = async function () {
-  const email = document.getElementById("email")?.value.trim();
-  const password = document.getElementById("password")?.value.trim();
-  if (!email || !password) return alert("Enter email and password");
+export async function doLogin(email, password) {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  location.replace("dashboard.html");
+}
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return alert(error.message);
+export async function doRegister(email, password) {
+  const { error } = await supabase.auth.signUp({ email, password });
+  if (error) throw error;
+  location.replace("index.html");
+}
 
-  window.location.href = "dashboard.html";
-};
-
-// -------- Logout ----------
-window.handleLogout = async function () {
+export async function doLogout() {
   await supabase.auth.signOut();
-  window.location.href = "index.html";
-};
+  location.replace("index.html");
+}
 
-// -------- Route Guard ----------
-window.authGuard = async function (isPublicPage = false) {
-  const { data } = await supabase.auth.getSession();
-  const session = data?.session;
-
-  if (!session && !isPublicPage) {
-    window.location.href = "index.html";
-  }
-
-  if (session && isPublicPage) {
-    window.location.href = "dashboard.html";
-  }
-};
+export async function getSessionUser() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user || null;
+}
