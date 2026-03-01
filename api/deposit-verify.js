@@ -14,19 +14,24 @@ export default async function handler(req, res) {
     const { reference } = req.body || {};
     if (!reference) return res.status(400).json({ error: "Missing reference" });
 
-    // Verify on Paystack
+    // 1) Verify payment with Paystack
     const r = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
       headers: { Authorization: `Bearer ${PAYSTACK_SECRET_KEY}` },
     });
+
     const v = await r.json();
 
-    if (!v.status) return res.status(400).json({ error: "Verification failed", raw: v });
-    if (v.data.status !== "success") return res.status(400).json({ error: "Payment not successful" });
+    if (!v.status) return res.status(400).json({ error: "Paystack verification failed", raw: v });
 
-    const email = (v.data.customer?.email || "").toLowerCase();
-    const amount = Number(v.data.amount) / 100; // convert from kobo
+    const trx = v.data;
+    if (trx.status !== "success") return res.status(400).json({ error: "Payment not successful" });
 
-    // Prevent double-credit (important!)
+    const userEmail = (trx.customer?.email || "").toLowerCase();
+    const amount = Number(trx.amount) / 100; // kobo -> naira
+
+    if (!userEmail || !amount) return res.status(400).json({ error: "Invalid Paystack response" });
+
+    // 2) Prevent double-credit using transactions.reference
     const { data: existing } = await supabase
       .from("transactions")
       .select("id")
@@ -37,39 +42,56 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: "Already credited" });
     }
 
-    // Get user
+    // 3) Find user in users table
     const { data: userRow, error: uErr } = await supabase
       .from("users")
-      .select("id, email, balance")
-      .ilike("email", email)
+      .select("id,email")
+      .ilike("email", userEmail)
       .single();
 
-    if (uErr || !userRow) return res.status(404).json({ error: "User not found in database" });
+    if (uErr || !userRow) return res.status(404).json({ error: "User not found" });
 
-    const newBalance = Number(userRow.balance || 0) + amount;
+    // 4) Fetch wallet
+    const { data: walletRow, error: wErr } = await supabase
+      .from("wallets")
+      .select("id,balance")
+      .eq("user_id", userRow.id)
+      .single();
 
-    // Update balance
-    const { error: bErr } = await supabase
-      .from("users")
-      .update({ balance: newBalance })
-      .eq("id", userRow.id);
+    if (wErr || !walletRow) return res.status(404).json({ error: "Wallet not found" });
 
-    if (bErr) return res.status(500).json({ error: "Failed to update wallet" });
+    const newBalance = Number(walletRow.balance || 0) + Number(amount);
 
-    // Log transaction
-    await supabase.from("transactions").insert([{
+    // 5) Update wallet balance
+    const { error: upErr } = await supabase
+      .from("wallets")
+      .update({ balance: newBalance, updated_at: new Date().toISOString() })
+      .eq("user_id", userRow.id);
+
+    if (upErr) return res.status(500).json({ error: "Failed to update wallet balance" });
+
+    // 6) Log transaction
+    const { error: tErr } = await supabase.from("transactions").insert([{
       user_id: userRow.id,
       user_email: userRow.email,
       type: "Deposit",
-      amount,
-      reference,
+      amount: Number(amount),
       status: "success",
-      created_at: new Date().toISOString(),
+      reference,
+      description: "Deposit via Paystack",
+      meta: {
+        channel: trx.channel,
+        gateway_response: trx.gateway_response,
+        paid_at: trx.paid_at
+      },
+      created_at: new Date().toISOString()
     }]);
+
+    if (tErr) return res.status(500).json({ error: "Failed to log transaction" });
 
     return res.status(200).json({ message: "Deposit credited", newBalance });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Server error" });
   }
-}
+      }
