@@ -1,266 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lomashares Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | LomaShares</title>
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
+    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
+  </script>
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-
-<style>
-/* ================== BASE STYLES ================== */
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Roboto',sans-serif; }
-body { background: linear-gradient(180deg, #0a0a0a, #001f4d); color:#fff; min-height:100vh; display:flex; flex-direction:column; }
-
-/* ================== HEADER ================== */
-.header {
-  position: fixed; top:0; left:0; width:100%; height:60px;
-  background: linear-gradient(to right,#000000,#0a1f44);
-  display:flex; justify-content:center; align-items:center; z-index:1000;
-  box-shadow:0 2px 10px rgba(0,0,0,0.4);
-}
-.header .logo-text { font-size:20px; font-weight:bold; letter-spacing:2px; color:#1e90ff; }
-
-/* ================== DROPDOWN MENU ================== */
-.menu-icon {
-  position:absolute; left:15px; cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height:18px;
-}
-.menu-icon span { display:block; width:25px; height:3px; background:#1e90ff; border-radius:2px; }
-.dropdown-menu {
-  position:absolute; top:60px; left:10px; background:#0a1f44; width:160px;
-  border-radius:8px; display:none; flex-direction:column; padding:10px 0; box-shadow:0 5px 20px rgba(0,0,0,0.5);
-}
-.dropdown-menu a { color:#fff; padding:12px 20px; text-decoration:none; display:flex; align-items:center; gap:8px; }
-.dropdown-menu a:hover { background:#1e90ff; }
-
-/* ================== MAIN CONTENT ================== */
-.main { margin-top:70px; padding:15px; flex:1; }
-
-/* Wallet Info */
-.wallet {
-  background:#0b0b0b; border-radius:15px; padding:15px; margin-bottom:20px;
-  box-shadow:0 4px 15px rgba(0,191,255,0.2);
-}
-.wallet h2 { color:#00bfff; margin-bottom:10px; font-size:18px; }
-.wallet p { font-size:16px; margin-bottom:5px; }
-
-/* Quick Links */
-.quick-links { display:flex; flex-wrap:wrap; justify-content:space-between; margin-bottom:20px; gap:10px; }
-.quick-links button {
-  flex:1 1 48%; padding:12px; border:none; border-radius:10px;
-  background:#004080; color:#fff; font-weight:500; font-size:16px; cursor:pointer;
-  transition:all 0.3s ease; display:flex; align-items:center; justify-content:center; gap:8px;
-}
-.quick-links button:hover { background:#00bfff; transform:translateY(-2px); }
-
-/* Product List */
-.products { display:flex; flex-direction:column; gap:15px; }
-.product-card {
-  background:#0b0b0b; border-radius:15px; padding:15px;
-  box-shadow:0 4px 12px rgba(0,191,255,0.2); display:flex; flex-direction:column; justify-content:space-between;
-  transition: all 0.3s ease;
-}
-.product-card:hover { transform: translateY(-5px); box-shadow:0 8px 20px rgba(0,191,255,0.4); }
-.product-card h3 { color:#00bfff; margin-bottom:8px; font-size:16px; }
-.product-card p { font-size:14px; margin-bottom:5px; }
-.product-card button {
-  padding:10px; border:none; border-radius:8px; background:#004080; color:#fff; cursor:pointer; transition:all 0.3s ease;
-}
-.product-card button:hover { background:#00bfff; transform:translateY(-2px); }
-
-/* ================== FOOTER ================== */
-.footer {
-  position: sticky; bottom:0; left:0; width:100%; background:#0a1f44;
-  display:flex; justify-content:space-around; padding:10px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.4);
-}
-.footer a { color:#fff; text-decoration:none; font-size:14px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px; }
-.footer a:hover { color:#00bfff; }
-
-/* ================== MOBILE ================== */
-@media (max-width:480px){
-  .wallet h2{ font-size:16px; } .wallet p{ font-size:14px; }
-  .quick-links button{ font-size:14px; padding:10px; }
-  .product-card h3{ font-size:15px; } .product-card p{ font-size:13px; }
-}
-</style>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <header class="header"></header>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="menu-icon" onclick="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <div class="logo-text">LOMASHARES</div>
-  <div class="dropdown-menu" id="dropdownMenu">
-    <a href="index.html"><i class="fas fa-home"></i> Home</a>
-    <a href="investment.html"><i class="fas fa-chart-line"></i> Invest</a>
-    <a href="team.html"><i class="fas fa-users"></i> Team</a>
-    <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-  </div>
-</header>
+  <main class="container">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <div style="font-weight:1000;font-size:14px;color:rgba(234,242,255,.9)">Available Balance</div>
+          <div id="bal" style="font-weight:1000;font-size:22px;margin-top:6px">₦0</div>
+          <div id="balHint" class="note" style="margin-top:6px">Fetching wallet…</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:12px;color:rgba(234,242,255,.75);font-weight:900">200% in 30 days</div>
+          <div style="margin-top:6px" class="pTag">Mobile-first</div>
+        </div>
+      </div>
+    </div>
 
-<!-- MAIN CONTENT -->
-<div class="main">
+    <div class="sectionTitle">Quick Links</div>
+    <div class="quick">
+      <a class="qbtn" href="deposit.html">
+        <span style="width:22px;height:22px;display:inline-block;color:#7db7ff">${""}</span>
+        <div>
+          Deposit
+          <small>Fund wallet</small>
+        </div>
+      </a>
+      <a class="qbtn" href="withdraw.html">
+        <div>
+          Withdraw
+          <small>Min ₦500</small>
+        </div>
+      </a>
+      <a class="qbtn" href="gift.html">
+        <div>
+          Gift Code
+          <small>Redeem coupon</small>
+        </div>
+      </a>
+      <a class="qbtn" href="refer.html">
+        <div>
+          Refer
+          <small>Earn 10%</small>
+        </div>
+      </a>
+    </div>
 
-  <!-- WALLET INFO -->
-  <div class="wallet">
-    <h2>Wallet Balance: ₦<span id="wallet-balance">0</span></h2>
-    <p>Total Deposited: ₦<span id="total-deposit">0</span></p>
-    <p>Total Withdrawn: ₦<span id="total-withdraw">0</span></p>
-  </div>
+    <div class="sectionTitle">Investment Products</div>
+    <div id="products" style="display:flex;flex-direction:column;gap:10px"></div>
 
-  <!-- QUICK LINKS -->
-  <div class="quick-links">
-    <button onclick="window.location.href='deposit.html'"><i class="fas fa-wallet"></i> Deposit</button>
-    <button onclick="window.location.href='withdraw.html'"><i class="fas fa-arrow-up"></i> Withdraw</button>
-    <button onclick="window.location.href='gift.html'"><i class="fas fa-gift"></i> Gift</button>
-    <button onclick="window.location.href='refer.html'"><i class="fas fa-share-alt"></i> Refer</button>
-  </div>
+    <div class="note">Products can be bought up to <b>2 times per product lifetime</b>. (Enforce in backend.)</div>
+  </main>
 
-  <!-- PRODUCTS LIST -->
-  <div class="products" id="products-list"></div>
+  <footer class="footer"></footer>
 
-</div>
+  <script type="module">
+    import { guard } from "./auth.js";
+    import { mountHeader, mountFooter, getUserEmail, fetchWalletBalanceByEmail } from "./ui.js";
 
-<!-- FOOTER -->
-<footer class="footer">
-  <a href="index.html"><i class="fas fa-home"></i> Home</a>
-  <a href="investment.html"><i class="fas fa-chart-line"></i> Invest</a>
-  <a href="team.html"><i class="fas fa-users"></i> Team</a>
-  <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-</footer>
-  
-<script>
-// Check auth status and redirect accordingly
-(function() {
-    const authUser = JSON.parse(localStorage.getItem('authUser'));
+    window.addEventListener("load", () => guard({ isPublicPage:false }));
 
-    const currentPage = window.location.pathname.split("/").pop();
+    mountHeader({
+      menuLinks: [
+        { href:"dashboard.html", label:"Dashboard", icon:"home" },
+        { href:"deposit.html", label:"Deposit", icon:"deposit" },
+        { href:"withdraw.html", label:"Withdraw", icon:"withdraw" },
+        { href:"profile.html", label:"Profile", icon:"profile" }
+      ]
+    });
+    mountFooter("home");
 
-    // Pages that require login
-    const protectedPages = [
-        "dashboard.html",
-        "investment.html",
-        "deposit.html",
-        "withdraw.html",
-        "profile.html",
-        "refer.html",
-        "team.html",
-        "transactions.html",
-        "admin-withdrawals.html"
+    const PRODUCTS = [
+      { id:1, price:3000 },
+      { id:2, price:5000 },
+      { id:3, price:7000 },
+      { id:4, price:10000 },
+      { id:5, price:15000 },
+      { id:6, price:20000 },
+      { id:7, price:30000 },
+      { id:8, price:40000 },
+      { id:9, price:50000 },
+      { id:10, price:100000 },
     ];
+    const DAYS = 30;
+    const TOTAL_RETURN_MULT = 2; // 200%
 
-    // Redirect to dashboard if already logged in and on index/login/register
-    if(authUser && ["index.html", "login.html", "register.html"].includes(currentPage)) {
-        window.location.href = "dashboard.html";
-        return;
+    function naira(n){ return "₦" + Number(n||0).toLocaleString(); }
+
+    function renderProducts(){
+      const box = document.getElementById("products");
+      box.innerHTML = "";
+      PRODUCTS.forEach(p=>{
+        const totalReturn = p.price * TOTAL_RETURN_MULT;
+        const daily = totalReturn / DAYS;
+
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <div>
+            <h4>Product ${p.id} • ${naira(p.price)}</h4>
+            <p>Daily income: <b>${naira(daily.toFixed(2))}</b><br>Return: <b>200%</b> in <b>${DAYS} days</b></p>
+          </div>
+          <div class="pRight">
+            <div class="pTag">Active</div>
+            <button class="btnOutline" type="button" data-id="${p.id}">Invest</button>
+          </div>
+        `;
+        box.appendChild(div);
+      });
+
+      box.querySelectorAll("button[data-id]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const pid = btn.getAttribute("data-id");
+          // You will later call your backend /api/investment here.
+          alert("Invest clicked for Product " + pid + ". (Connect to /api/investment.js next)");
+        });
+      });
     }
 
-    // Redirect to index page if not logged in and on protected pages
-    if(!authUser && protectedPages.includes(currentPage)) {
-        window.location.href = "index.html";
-        return;
+    async function loadWallet(){
+      const email = await getUserEmail();
+      const hint = document.getElementById("balHint");
+      if (!email){ hint.textContent = "Not logged in"; return; }
+      try{
+        const bal = await fetchWalletBalanceByEmail(email);
+        document.getElementById("bal").textContent = naira(bal);
+        hint.textContent = "Wallet updated.";
+      }catch(e){
+        hint.textContent = "Wallet error: " + e.message;
+      }
     }
-})();
-</script>
-<script>
-/* DROPDOWN MENU */
-function toggleMenu() {
-  const menu = document.getElementById('dropdownMenu');
-  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-}
-window.addEventListener('click', function(e){
-  const menu = document.getElementById('dropdownMenu');
-  const icon = document.querySelector('.menu-icon');
-  if(!icon.contains(e.target) && !menu.contains(e.target)){
-    menu.style.display = 'none';
-  }
-});
 
-/* PRODUCTS DATA */
-const PRODUCTS = [
-  { id:1, price:3000 }, { id:2, price:5000 }, { id:3, price:7000 },
-  { id:4, price:10000 }, { id:5, price:15000 }, { id:6, price:20000 },
-  { id:7, price:30000 }, { id:8, price:40000 }, { id:9, price:50000 },
-  { id:10, price:100000 }
-];
-
-/* GET USER */
-function getAuthUser() { return JSON.parse(localStorage.getItem('authUser')); }
-
-/* WALLET UPDATE */
-function updateWallet() {
-  const user = getAuthUser();
-  if(!user) return;
-  document.getElementById('wallet-balance').textContent = user.balance || 0;
-  document.getElementById('total-deposit').textContent = user.totalDeposited || 0;
-  document.getElementById('total-withdraw').textContent = user.totalWithdrawn || 0;
-}
-
-/* RENDER PRODUCTS */
-function renderProducts() {
-  const container = document.getElementById('products-list');
-  container.innerHTML = '';
-  const user = getAuthUser();
-  if(!user) return;
-
-  PRODUCTS.forEach(p=>{
-    const investedTimes = user.investments.filter(inv=>inv.productId===p.id).length;
-    const buttonText = investedTimes>=2 ? 'Max Invested' : 'Invest';
-    const dailyIncome = (p.price*2/30).toFixed(2);
-
-    const card = document.createElement('div');
-    card.className='product-card';
-    card.innerHTML=`
-      <h3>Product ₦${p.price.toLocaleString()}</h3>
-      <p>Total Return: ₦${(p.price*2).toLocaleString()} (200% in 30 days)</p>
-      <p>Daily Income: ₦${dailyIncome}</p>
-      <p>Invested: ${investedTimes}/2</p>
-      <button ${investedTimes>=2?'disabled':''} onclick="invest(${p.id})">${buttonText}</button>
-    `;
-    container.appendChild(card);
-  });
-}
-
-/* INVEST FUNCTION */
-function invest(productId){
-  const users = JSON.parse(localStorage.getItem('users'))||[];
-  const user = getAuthUser();
-  if(!user) return;
-
-  const product = PRODUCTS.find(p=>p.id===productId);
-  if(!product) return;
-
-  if(user.balance<product.price){ alert('Insufficient balance'); return; }
-  const investedTimes = user.investments.filter(inv=>inv.productId===productId).length;
-  if(investedTimes>=2){ alert('You can only invest in this product twice lifetime'); return; }
-
-  user.balance-=product.price;
-  const totalReturn=product.price*2;
-  const dailyIncome=totalReturn/30;
-  const investment={ productId, price:product.price, daily:dailyIncome, days:30, startDate:new Date().toISOString(), lastPaid:null, completedDays:0, active:true };
-  user.investments.push(investment);
-
-  const allUsers=users.map(u=>u.email===user.email?user:u);
-  localStorage.setItem('users',JSON.stringify(allUsers));
-  localStorage.setItem('authUser',JSON.stringify(user));
-
-  updateWallet();
-  renderProducts();
-  alert('Investment successful');
-}
-
-/* INITIALIZE DASHBOARD */
-window.addEventListener('load', function(){ updateWallet(); renderProducts(); });
-</script>
-
+    renderProducts();
+    loadWallet();
+  </script>
 </body>
-  </html>
+</html>
