@@ -176,6 +176,10 @@
     <a class="fitem" href="team.html">Team</a>
     <a class="fitem" href="profile.html">Profile</a>
   </div>
+  <script type="module">
+  import "./auth.js";
+  window.addEventListener("load", () => window.authGuard(false));
+  </script>
 <script>
   fetch("/api/wallet-balance", {
   method: "POST",
