@@ -4,87 +4,407 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Deposit | LomaShares</title>
-
-  <script>
-    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
-    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
-  </script>
-
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root{
+      --bg:#070B14;
+      --card: rgba(255,255,255,.04);
+      --stroke: rgba(255,255,255,.10);
+      --txt:#EAF2FF;
+      --muted: rgba(234,242,255,.70);
+      --blue:#1B6BFF;
+      --gold:#D6B56A;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r20:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(900px 420px at 50% -120px, rgba(27,107,255,.25), transparent 55%),
+                  radial-gradient(700px 360px at 80% 10%, rgba(214,181,106,.10), transparent 60%),
+                  var(--bg);
+      color:var(--txt);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      padding-bottom: 86px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .header{
+      position: sticky; top:0; z-index:30;
+      height: 64px; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.24));
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .brand{font-weight:1000; letter-spacing:2.6px; font-size:15px; color: rgba(234,242,255,.92)}
+    .container{padding: 14px}
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r20);
+      box-shadow: var(--shadow);
+    }
+    .pad{padding: 16px}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .label{font-size: 12px; font-weight:1000; color: rgba(234,242,255,.82); letter-spacing:.8px}
+    .value{font-size: 22px; font-weight:1000; margin-top:8px}
+    .note{font-size: 12px; color: rgba(234,242,255,.60); margin-top: 8px; line-height:1.45}
+    .pill{
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(214,181,106,.35);
+      background: rgba(214,181,106,.10);
+      font-size: 12px; font-weight:1000;
+      white-space: nowrap;
+    }
+    .title{margin: 16px 4px 10px; font-weight:1000; letter-spacing:.7px; font-size: 13px; color: rgba(234,242,255,.88)}
+    .amtInput{
+      width: 100%;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color: var(--txt);
+      outline:none;
+      font-weight: 1000;
+      font-size: 16px;
+    }
+    .amtInput::placeholder{color: rgba(234,242,255,.45)}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .q{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      color: rgba(234,242,255,.90);
+      padding: 12px 10px;
+      border-radius: 16px;
+      font-weight: 1000;
+      cursor:pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+    }
+    .q.active{
+      border-color: rgba(125,183,255,.45);
+      background: rgba(27,107,255,.14);
+    }
+    .btn{
+      border: none; cursor:pointer; width: 100%;
+      background: linear-gradient(135deg, rgba(27,107,255,1), rgba(214,181,106,.80));
+      color: #071021;
+      font-weight: 1000;
+      padding: 14px 14px;
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(27,107,255,.22);
+      font-size: 15px;
+      margin-top: 12px;
+    }
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .toast{
+      position: fixed;
+      left: 50%; transform: translateX(-50%);
+      bottom: 96px; z-index: 60;
+      width: calc(100% - 24px);
+      max-width: 520px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(10px);
+      display:none;
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .toast.good{border-color: rgba(24,195,126,.45)}
+    .toast.bad{border-color: rgba(255,77,79,.45)}
+    .toast .sub{display:block;margin-top:5px;color: rgba(234,242,255,.65); font-weight: 800; font-size: 12px}
+    .footer{
+      position: fixed;
+      bottom:0; left:50%; transform: translateX(-50%);
+      width: 100%; max-width: 520px;
+      height: 78px;
+      background: rgba(0,0,0,.68);
+      border-top: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 40;
+    }
+    .fbtn{
+      text-decoration:none;
+      color: rgba(234,242,255,.70);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      font-weight: 900;
+      font-size: 11px;
+    }
+    .ico{
+      width: 40px; height: 40px;
+      border-radius: 16px;
+      display:flex; align-items:center; justify-content:center;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(234,242,255,.75);
+    }
+    .fbtn svg{width:22px; height:22px}
+    .fbtn.active{color: rgba(234,242,255,.95)}
+    .fbtn.active .ico{background: rgba(27,107,255,.16); border-color: rgba(125,183,255,.35); color: rgba(125,183,255,1)}
+  </style>
 </head>
 <body>
-  <header class="header"></header>
+  <header class="header">
+    <div class="brand">LOMASHARES</div>
+  </header>
 
   <main class="container">
-    <div class="card">
-      <h3 style="margin:0;font-weight:1000">Fund Wallet</h3>
-      <div class="note">Minimum deposit: <b>₦1,000</b>. You’ll be redirected to Paystack to complete payment.</div>
+    <div class="card pad">
+      <div class="row">
+        <div>
+          <div class="label">AVAILABLE BALANCE</div>
+          <div id="walletBalance" class="value">₦0</div>
+          <div id="walletHint" class="note">Fetching wallet…</div>
+        </div>
+        <div class="pill">Paystack Redirect</div>
+      </div>
+    </div>
 
-      <div class="field"><div class="dot"></div><input id="amount" inputmode="numeric" placeholder="Enter amount (₦)"></div>
+    <div class="title">Deposit Amount</div>
 
-      <div class="sectionTitle">Quick Amount</div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btnOutline" type="button" data-amt="1000">₦1,000</button>
-        <button class="btnOutline" type="button" data-amt="5000">₦5,000</button>
-        <button class="btnOutline" type="button" data-amt="10000">₦10,000</button>
-        <button class="btnOutline" type="button" data-amt="30000">₦30,000</button>
-        <button class="btnOutline" type="button" data-amt="50000">₦50,000</button>
-        <button class="btnOutline" type="button" data-amt="100000">₦100,000</button>
+    <div class="card pad">
+      <input id="amount" class="amtInput" inputmode="numeric" placeholder="Enter amount e.g 5000" />
+
+      <div class="grid" id="quickGrid">
+        <button class="q" type="button" data-amt="1000">₦1,000</button>
+        <button class="q" type="button" data-amt="5000">₦5,000</button>
+        <button class="q" type="button" data-amt="10000">₦10,000</button>
+        <button class="q" type="button" data-amt="30000">₦30,000</button>
+        <button class="q" type="button" data-amt="50000">₦50,000</button>
+        <button class="q" type="button" data-amt="100000">₦100,000</button>
       </div>
 
-      <button class="btn" id="depositBtn" type="button">Continue to Paystack</button>
-      <div class="note" id="msg"></div>
+      <button id="payBtn" class="btn" type="button">Pay with Paystack</button>
+
+      <div class="note">
+        Minimum deposit is <b>₦1,000</b>. After payment, you’ll be redirected back and your wallet will update automatically.
+      </div>
     </div>
   </main>
 
-  <footer class="footer"></footer>
+  <div id="toast" class="toast">
+    <span id="toastMain">—</span>
+    <span id="toastSub" class="sub"></span>
+  </div>
 
-  <script type="module">
-    import { guard } from "./auth.js";
-    import { mountHeader, mountFooter, getUserEmail } from "./ui.js";
+  <footer class="footer">
+    <a class="fbtn" href="dashboard.html">
+      <span class="ico">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      Home
+    </a>
+    <a class="fbtn" href="investment.html">
+      <span class="ico">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 17v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 17V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 17v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 17V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Invest
+    </a>
+    <a class="fbtn" href="team.html">
+      <span class="ico">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 21c1.2-4 4-6 8-6s6.8 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Team
+    </a>
+    <a class="fbtn active" href="profile.html">
+      <span class="ico">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 21c1.5-5 4.5-7 8-7s6.5 2 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Profile
+    </a>
+  </footer>
 
-    window.addEventListener("load", () => guard({ isPublicPage:false }));
+  <script>
+    function naira(n){ return "₦" + Number(n||0).toLocaleString(); }
 
-    mountHeader({
-      menuLinks: [
-        { href:"dashboard.html", label:"Dashboard", icon:"home" },
-        { href:"deposit.html", label:"Deposit", icon:"deposit" },
-        { href:"withdraw.html", label:"Withdraw", icon:"withdraw" },
-      ]
-    });
-    mountFooter("home");
-
-    const amountEl = document.getElementById("amount");
-    const msg = document.getElementById("msg");
-
-    document.querySelectorAll("button[data-amt]").forEach(b=>{
-      b.addEventListener("click", ()=>{
-        amountEl.value = b.getAttribute("data-amt");
-      });
-    });
-
-    document.getElementById("depositBtn").addEventListener("click", async ()=>{
-      const email = await getUserEmail();
-      const amount = Number(String(amountEl.value||"").replace(/[^0-9.]/g,""));
-      if (!email) return alert("Not logged in");
-      if (!amount || amount < 1000) return alert("Minimum deposit is ₦1,000");
-
-      msg.textContent = "Redirecting to Paystack…";
-
-      // Redirect flow (requires api/deposit-init.js)
+    function getAuthEmail(){
       try{
-        const r = await fetch("/api/deposit-init", {
+        const au = JSON.parse(localStorage.getItem("authUser") || "null");
+        if (au && au.email) return String(au.email).toLowerCase();
+      }catch(e){}
+      return null;
+    }
+
+    let toastTimer=null;
+    function toast(type, main, sub){
+      const t=document.getElementById("toast");
+      const m=document.getElementById("toastMain");
+      const s=document.getElementById("toastSub");
+      t.className = "toast " + (type==="good" ? "good" : "bad");
+      m.textContent = main || "";
+      s.textContent = sub || "";
+      t.style.display="block";
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>t.style.display="none", 5200);
+    }
+
+    async function loadWallet(){
+      const hint=document.getElementById("walletHint");
+      const bal=document.getElementById("walletBalance");
+      const email=getAuthEmail();
+      if(!email){
+        hint.textContent="Not logged in. Redirecting…";
+        setTimeout(()=>window.location.href="index.html",700);
+        return;
+      }
+
+      try{
+        const r=await fetch("/api/wallet",{
           method:"POST",
           headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ email, amount })
+          body: JSON.stringify({ action:"balance", email })
         });
-        const data = await r.json();
-        if (!r.ok || data.error) throw new Error(data.error || "Deposit init failed");
-        window.location.href = data.authorization_url;
+        const d=await r.json();
+
+        if(!r.ok || d.error){
+          hint.textContent="Wallet API error";
+          toast("bad","Wallet error", d.error || "Failed to fetch wallet");
+          return;
+        }
+
+        bal.textContent = naira(d.balance || 0);
+        hint.textContent="Wallet updated.";
       }catch(e){
-        msg.textContent = "Error: " + e.message;
+        hint.textContent="Network error";
+        toast("bad","Network error","Failed to fetch wallet");
       }
+    }
+
+    function setupQuickButtons(){
+      const input=document.getElementById("amount");
+      const grid=document.getElementById("quickGrid");
+      grid.querySelectorAll("button[data-amt]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          grid.querySelectorAll(".q").forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+          input.value = btn.getAttribute("data-amt");
+          input.focus();
+        });
+      });
+      input.addEventListener("input", ()=>grid.querySelectorAll(".q").forEach(x=>x.classList.remove("active")));
+    }
+
+    // On return from paystack -> verify
+    async function verifyIfReturned(){
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get("reference") || params.get("trxref");
+
+      if(!ref) return;
+
+      toast("good","Verifying payment…","Please wait");
+
+      try{
+        const r = await fetch("/api/wallet",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ action:"paystack_verify_deposit", reference: ref })
+        });
+        const d = await r.json();
+
+        if(!r.ok || d.error){
+          toast("bad","Verification failed", d.error || "Could not verify payment");
+          return;
+        }
+
+        toast("good","Deposit successful ✅", "Wallet updated automatically.");
+        // remove query params so refresh won't re-verify visually
+        window.history.replaceState({}, document.title, window.location.pathname);
+        await loadWallet();
+      }catch(e){
+        toast("bad","Network error","Could not verify now.");
+      }
+    }
+
+    // Start paystack redirect
+    async function startDeposit(){
+      const btn=document.getElementById("payBtn");
+      const email=getAuthEmail();
+      if(!email){
+        toast("bad","Not logged in","Please login again.");
+        window.location.href="index.html";
+        return;
+      }
+
+      const amount = Number(String(document.getElementById("amount").value||"").replace(/,/g,"").trim());
+      if(!amount || amount < 1000){
+        toast("bad","Invalid amount","Minimum deposit is ₦1,000");
+        return;
+      }
+
+      btn.disabled=true;
+      btn.textContent="Redirecting…";
+
+      try{
+        const return_url = window.location.origin + window.location.pathname; // /deposit.html
+
+        const r = await fetch("/api/wallet",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({
+            action:"paystack_init_deposit",
+            email,
+            amount,
+            return_url
+          })
+        });
+
+        const d = await r.json();
+        if(!r.ok || d.error){
+          toast("bad","Deposit failed", d.error || "Could not start payment");
+          btn.disabled=false;
+          btn.textContent="Pay with Paystack";
+          return;
+        }
+
+        // Redirect to Paystack checkout
+        window.location.href = d.authorization_url;
+      }catch(e){
+        toast("bad","Network error","Could not start payment");
+        btn.disabled=false;
+        btn.textContent="Pay with Paystack";
+      }
+    }
+
+    window.addEventListener("load", async ()=>{
+      const email=getAuthEmail();
+      if(!email){
+        window.location.href="index.html";
+        return;
+      }
+      setupQuickButtons();
+      await loadWallet();
+      await verifyIfReturned();
+
+      document.getElementById("payBtn").addEventListener("click", startDeposit);
     });
   </script>
 </body>
-</html>
+  </html>
