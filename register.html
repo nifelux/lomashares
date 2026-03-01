@@ -5,410 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register | LomaShares</title>
 
-  <!-- Supabase keys (PASTE YOUR REAL VALUES) -->
   <script>
-    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
-    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
+    window.__SUPABASE_URL__ = "YOUR_SUPABASE_URL_HERE";
+    window.__SUPABASE_ANON_KEY__ = "YOUR_SUPABASE_ANON_KEY_HERE";
   </script>
 
-  <style>
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    body{margin:0;background:#071428;color:#eaf2ff;min-height:100vh}
-
-    /* ===== Sticky Header ===== */
-    .main-header{
-      position:sticky;top:0;z-index:50;
-      height:60px;
-      background:linear-gradient(90deg,#050b16,#0b2a59);
-      display:flex;align-items:center;justify-content:center;
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    .logo-text{
-      color:#7db7ff;
-      font-weight:1000;
-      letter-spacing:2px;
-      font-size:16px;
-      text-align:center;
-      pointer-events:none;
-    }
-
-    /* Hamburger (left) */
-    .menu-btn{
-      position:absolute;left:14px;
-      width:40px;height:40px;border-radius:12px;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .menu-btn span{
-      display:block;width:18px;height:2px;background:#7db7ff;
-      margin:3px 0;border-radius:2px;
-    }
-
-    /* Dropdown */
-    .menu{
-      position:absolute;top:62px;left:14px;
-      width:190px;
-      background:#050b16;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      box-shadow:0 18px 45px rgba(0,0,0,.45);
-      display:none;
-      overflow:hidden;
-    }
-    .menu a{
-      display:block;
-      padding:14px 14px;
-      color:#eaf2ff;
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .menu a:last-child{border-bottom:none}
-    .menu a:hover{background:rgba(27,107,255,.14)}
-
-    /* ===== Layout ===== */
-    .wrap{
-      max-width:520px;margin:0 auto;
-      padding:16px 14px 18px;
-    }
-
-    .card{
-      margin-top:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:0 14px 40px rgba(0,0,0,.35);
-    }
-
-    /* Logo circle */
-    .brandMark{
-      width:84px;height:84px;border-radius:50%;
-      margin:6px auto 10px;
-      display:flex;align-items:center;justify-content:center;
-      background:radial-gradient(circle at 30% 30%, #1b6bff, #0b2a59 55%, #050b16 100%);
-      border:3px solid rgba(247,213,106,.9);
-      box-shadow:0 18px 45px rgba(27,107,255,.18);
-      font-weight:1000;
-      letter-spacing:2px;
-      color:#eaf2ff;
-      font-size:18px;
-    }
-
-    h1{
-      margin:10px 0 6px;
-      font-size:20px;
-      font-weight:1000;
-      text-align:center;
-      letter-spacing:.3px;
-    }
-    .sub{
-      margin:0 0 14px;
-      text-align:center;
-      color:rgba(234,242,255,.75);
-      font-size:13px;
-      line-height:1.45;
-    }
-
-    .field{
-      margin-top:10px;
-      background:#020817;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      padding:12px 12px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:linear-gradient(135deg,#f7d56a,#caa33a);
-      flex:0 0 auto;
-      box-shadow:0 10px 20px rgba(202,163,58,.12);
-    }
-    input{
-      width:100%;
-      border:none;outline:none;background:transparent;
-      color:#eaf2ff;font-size:14px;font-weight:800;
-    }
-    input::placeholder{color:rgba(234,242,255,.45);font-weight:700}
-
-    .btn{
-      width:100%;
-      margin-top:14px;
-      padding:14px 12px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(90deg,#1b6bff,#0b2a59);
-      color:#fff;
-      font-weight:1000;
-      font-size:15px;
-      cursor:pointer;
-      box-shadow:0 18px 35px rgba(27,107,255,.22);
-    }
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-
-    .row{
-      margin-top:12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      font-size:12px;
-      color:rgba(234,242,255,.72);
-    }
-    .row a{color:#7db7ff;text-decoration:none;font-weight:900}
-    .row a:hover{text-decoration:underline}
-
-    .miniNote{
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      color:rgba(234,242,255,.78);
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    .chipRow{
-      margin-top:10px;
-      display:flex;gap:8px;flex-wrap:wrap;
-    }
-    .chip{
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      color:rgba(234,242,255,.85);
-      font-weight:900;
-      font-size:12px;
-    }
-
-    /* About modal */
-    .modalWrap{
-      position:fixed;inset:0;display:none;
-      align-items:flex-end;justify-content:center;
-      background:rgba(0,0,0,.55);
-      z-index:80;
-      padding:14px;
-    }
-    .modal{
-      width:100%;max-width:520px;
-      background:#050b16;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 18px 45px rgba(0,0,0,.55);
-    }
-    .modal h3{margin:0 0 6px;font-size:16px;font-weight:1000;color:#eaf2ff}
-    .modal p{margin:0;color:rgba(234,242,255,.75);font-size:13px;line-height:1.55}
-    .modal .close{
-      margin-top:12px;
-      width:100%;
-      padding:12px;
-      border:none;border-radius:14px;
-      background:rgba(255,255,255,.08);
-      color:#eaf2ff;
-      font-weight:1000;
-      cursor:pointer;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <!-- Header -->
-  <header class="main-header">
-    <div class="menu-btn" id="menuBtn" aria-label="menu">
-      <div>
-        <span></span><span></span><span></span>
-      </div>
+  <header class="header"></header>
+
+  <main class="container">
+    <div class="card">
+      <h2 style="margin:6px 0 6px;text-align:center;font-weight:1000">Create account</h2>
+      <div class="note" style="text-align:center;margin-top:0">Wallet is created automatically after signup.</div>
+
+      <div class="field"><div class="dot"></div><input id="email" type="email" placeholder="Email address"></div>
+      <div class="field"><div class="dot"></div><input id="referral" type="text" placeholder="Referral code (optional)"></div>
+      <div class="field"><div class="dot"></div><input id="password" type="password" placeholder="Password (min 6 chars)"></div>
+      <div class="field"><div class="dot"></div><input id="confirm" type="password" placeholder="Confirm password"></div>
+
+      <button class="btn" id="regBtn" type="button">Create account</button>
+      <button class="btnOutline" type="button" onclick="location.href='index.html'">Back to login</button>
+
+      <div class="note" id="msg">Referral bonus: 10% of referral investment price.</div>
     </div>
-
-    <div class="logo-text">LOMASHARES</div>
-
-    <nav class="menu" id="dropdownMenu">
-      <a href="index.html">Login</a>
-      <a href="register.html">Register</a>
-      <a href="#" id="aboutLink">About</a>
-    </nav>
-  </header>
-
-  <main class="wrap">
-    <section class="card">
-      <div class="brandMark">LS</div>
-
-      <h1>Create Account</h1>
-      <p class="sub">Start investing in minutes. Your wallet is created automatically after signup.</p>
-
-      <div class="field">
-        <div class="dot"></div>
-        <input id="email" type="email" placeholder="Email address" autocomplete="email" />
-      </div>
-
-      <div class="field">
-        <div class="dot"></div>
-        <input id="referral" type="text" placeholder="Referral code (optional)" autocomplete="off" />
-      </div>
-
-      <div class="chipRow">
-        <div class="chip">Referral bonus: 10%</div>
-        <div class="chip">Wallet auto-created</div>
-        <div class="chip">Secure login</div>
-      </div>
-
-      <div class="field">
-        <div class="dot"></div>
-        <input id="password" type="password" placeholder="Password" autocomplete="new-password" />
-      </div>
-
-      <div class="field">
-        <div class="dot"></div>
-        <input id="confirm" type="password" placeholder="Confirm password" autocomplete="new-password" />
-      </div>
-
-      <button class="btn" id="registerBtn" type="button">Create account</button>
-
-      <div class="row">
-        <span>Already have an account?</span>
-        <a href="index.html">Login</a>
-      </div>
-
-      <div class="miniNote" id="msg">
-        Tip: If you received a referral code, enter it before creating your account.
-      </div>
-    </section>
   </main>
 
-  <!-- About Modal -->
-  <div class="modalWrap" id="aboutModal">
-    <div class="modal">
-      <h3>About LomaShares</h3>
-      <p>
-        LomaShares is a mobile-first investment platform designed for Nigerian users.
-        Create an account, fund your wallet via Paystack, invest in products, and track transactions.
-      </p>
-      <button class="close" id="closeAbout" type="button">Close</button>
-    </div>
-  </div>
-
-  <!-- Supabase Auth Register + Referral validation -->
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+    import { guard, doRegister, supabase } from "./auth.js";
+    import { mountHeader } from "./ui.js";
 
-    const SUPABASE_URL = window.__SUPABASE_URL__;
-    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.addEventListener("load", () => guard({ isPublicPage: true }));
 
-    async function authGuardPublic() {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session) window.location.href = "dashboard.html";
-    }
+    mountHeader({
+      menuLinks: [
+        { href:"index.html", label:"Login", icon:"home" },
+        { href:"register.html", label:"Register", icon:"profile" }
+      ]
+    });
 
-    window.addEventListener("load", authGuardPublic);
+    function setMsg(t){ document.getElementById("msg").textContent = t; }
 
-    function setMsg(text) {
-      const el = document.getElementById("msg");
-      el.textContent = text;
-    }
-
-    async function validateReferral(code) {
+    async function validateReferral(code){
       if (!code) return true;
-
-      // Check referral exists in profiles table
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, referral_code")
+        .select("id")
         .eq("referral_code", code)
         .limit(1);
-
       if (error) return false;
       return (data && data.length > 0);
     }
 
-    async function handleRegister() {
+    document.getElementById("regBtn").addEventListener("click", async () => {
       const email = document.getElementById("email").value.trim().toLowerCase();
-      const referral = document.getElementById("referral").value.trim().toUpperCase();
-      const password = document.getElementById("password").value.trim();
-      const confirm = document.getElementById("confirm").value.trim();
+      const ref = document.getElementById("referral").value.trim().toUpperCase();
+      const pass = document.getElementById("password").value.trim();
+      const conf = document.getElementById("confirm").value.trim();
 
-      if (!email || !password || !confirm) return alert("All fields are required");
-      if (password.length < 6) return alert("Password must be at least 6 characters");
-      if (password !== confirm) return alert("Passwords do not match");
+      if (!email || !pass || !conf) return alert("All fields required");
+      if (pass.length < 6) return alert("Password must be at least 6 characters");
+      if (pass !== conf) return alert("Passwords do not match");
 
-      // Validate referral code if provided
-      if (referral) {
+      if (ref){
         setMsg("Checking referral code...");
-        const ok = await validateReferral(referral);
-        if (!ok) {
-          setMsg("Invalid referral code. Please check and try again.");
-          return alert("Invalid referral code");
-        }
+        const ok = await validateReferral(ref);
+        if (!ok){ setMsg("Invalid referral code"); return alert("Invalid referral code"); }
       }
 
-      const btn = document.getElementById("registerBtn");
-      btn.disabled = true;
-      btn.textContent = "Creating account...";
-      setMsg("Creating your account...");
+      try{
+        await doRegister(email, pass);
 
-      const { data, error } = await supabase.auth.signUp({ email, password });
-
-      if (error) {
-        btn.disabled = false;
-        btn.textContent = "Create account";
-        setMsg("Signup failed: " + error.message);
-        return alert(error.message);
+        // After signup, profile trigger creates profile + wallet.
+        // If referral is provided, store it for later backend referral processing.
+        // (Optional) If you want: update referred_by now (requires user id; can be done after user confirms email).
+      }catch(e){
+        alert(e.message);
+        setMsg(e.message);
       }
-
-      // Save referred_by into profile (wallet/profile trigger already creates profile + wallet)
-      if (referral && data?.user?.id) {
-        await supabase.from("profiles").update({ referred_by: referral }).eq("id", data.user.id);
-      }
-
-      setMsg("Account created. Please login.");
-      alert("Registration successful! Please login.");
-      window.location.href = "index.html";
-    }
-
-    document.getElementById("registerBtn").addEventListener("click", handleRegister);
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleRegister();
-    });
-  </script>
-
-  <!-- UI Menu Script -->
-  <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const menu = document.getElementById("dropdownMenu");
-    const aboutModal = document.getElementById("aboutModal");
-    const aboutLink = document.getElementById("aboutLink");
-    const closeAbout = document.getElementById("closeAbout");
-
-    menuBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) menu.style.display = "none";
-    });
-
-    aboutLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      menu.style.display = "none";
-      aboutModal.style.display = "flex";
-    });
-
-    closeAbout.addEventListener("click", () => {
-      aboutModal.style.display = "none";
-    });
-
-    aboutModal.addEventListener("click", (e) => {
-      if (e.target === aboutModal) aboutModal.style.display = "none";
     });
   </script>
 </body>
-  </html>
+</html>
