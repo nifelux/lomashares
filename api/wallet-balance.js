@@ -4,58 +4,32 @@ export default async function handler(req, res) {
   try {
     const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!SUPABASE_URL || !SERVICE_KEY) {
-      return res.status(500).json({ error: "Missing Supabase env keys" });
-    }
-
     const { email } = req.body || {};
     if (!email) return res.status(400).json({ error: "Missing email" });
 
     const safeEmail = String(email).trim().toLowerCase();
 
-    // 1) Find user id from users table
-    const userRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/users?select=id,email&email=eq.${encodeURIComponent(safeEmail)}`,
-      {
-        headers: {
-          apikey: SERVICE_KEY,
-          Authorization: `Bearer ${SERVICE_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
+    // Get profile -> auth user id
+    const pRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/profiles?select=id,email&email=eq.${encodeURIComponent(safeEmail)}`,
+      { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
     );
+    const проф = await pRes.json();
+    if (!pRes.ok) return res.status(500).json({ error: "Profiles query failed", details: проф });
 
-    const users = await userRes.json();
-    if (!userRes.ok) {
-      return res.status(500).json({ error: "Users query failed", details: users });
-    }
+    const profile = проф?.[0];
+    if (!profile?.id) return res.status(404).json({ error: "User not found" });
 
-    const user = users?.[0];
-    if (!user?.id) return res.status(404).json({ error: "User not found" });
-
-    // 2) Get wallet balance from wallets table
-    const walletRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/wallets?select=balance&user_id=eq.${user.id}`,
-      {
-        headers: {
-          apikey: SERVICE_KEY,
-          Authorization: `Bearer ${SERVICE_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
+    // Get wallet balance
+    const wRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/wallets?select=balance&user_id=eq.${profile.id}`,
+      { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
     );
+    const w = await wRes.json();
+    if (!wRes.ok) return res.status(500).json({ error: "Wallet query failed", details: w });
 
-    const wallets = await walletRes.json();
-    if (!walletRes.ok) {
-      return res.status(500).json({ error: "Wallet query failed", details: wallets });
-    }
-
-    const wallet = wallets?.[0];
-    const balance = Number(wallet?.balance || 0);
-
-    return res.status(200).json({ balance });
-  } catch (err) {
-    return res.status(500).json({ error: "Server crash", message: String(err?.message || err) });
+    return res.status(200).json({ balance: Number(w?.[0]?.balance || 0) });
+  } catch (e) {
+    return res.status(500).json({ error: "Server error", message: String(e?.message || e) });
   }
-  }
+      }
