@@ -5,260 +5,86 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Deposit | LomaShares</title>
 
-  <style>
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    body{margin:0;background:#071428;color:#eaf2ff}
-
-    /* ===== Header ===== */
-    .header{
-      position:sticky;top:0;z-index:10;
-      height:60px;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(90deg,#050b16,#0b2a59);
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
-      font-weight:900;letter-spacing:2px;color:#7db7ff;
-    }
-
-    /* ===== Container ===== */
-    .wrap{padding:16px 14px 92px;max-width:520px;margin:0 auto}
-
-    .card{
-      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:18px;padding:18px;
-      box-shadow:0 14px 40px rgba(0,0,0,.35);
-    }
-
-    .title{font-size:18px;font-weight:900;margin:0 0 10px}
-    .sub{margin:0 0 16px;color:rgba(234,242,255,.8);font-size:13px;line-height:1.45}
-
-    .amountBox{
-      width:100%;
-      background:#020817;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:14px;
-      padding:14px;
-      display:flex;align-items:center;gap:10px
-    }
-    .naira{
-      width:34px;height:34px;border-radius:10px;
-      background:linear-gradient(135deg,#f7d56a,#caa33a);
-      display:flex;align-items:center;justify-content:center;
-      color:#121212;font-weight:900
-    }
-    input{
-      width:100%;
-      border:none;
-      outline:none;
-      background:transparent;
-      color:#eaf2ff;
-      font-size:18px;
-      font-weight:900;
-    }
-    input::placeholder{color:rgba(234,242,255,.45);font-weight:700}
-
-    /* ===== Quick Amount Buttons ===== */
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin-top:14px
-    }
-    .qbtn{
-      padding:12px 10px;
-      border:none;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:900;
-      color:#0b1220;
-      background:linear-gradient(135deg,#f7d56a,#caa33a);
-      box-shadow:0 10px 22px rgba(202,163,58,.18);
-      transition:.15s;
-    }
-    .qbtn:active{transform:scale(.98)}
-
-    /* ===== Deposit Button ===== */
-    .paybtn{
-      width:100%;
-      margin-top:16px;
-      padding:14px 12px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(90deg,#1b6bff,#0b2a59);
-      color:#fff;
-      font-weight:900;
-      font-size:16px;
-      cursor:pointer;
-      box-shadow:0 18px 35px rgba(27,107,255,.22);
-    }
-    .paybtn[disabled]{opacity:.55;cursor:not-allowed}
-
-    .note{
-      margin-top:12px;
-      font-size:12px;
-      color:rgba(234,242,255,.78);
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      padding:10px;
-      border-radius:14px;
-      line-height:1.5
-    }
-
-    /* ===== Footer ===== */
-    .footer{
-      position:fixed;left:0;right:0;bottom:0;z-index:10;
-      height:70px;
-      background:#050b16;
-      border-top:1px solid rgba(255,255,255,.08);
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-    }
-    .fitem{
-      color:rgba(234,242,255,.85);
-      text-decoration:none;
-      font-size:12px;
-      font-weight:900;
-    }
-
-    /* Small helper text */
-    .tiny{
-      margin-top:10px;
-      font-size:12px;
-      color:rgba(234,242,255,.65);
-    }
-  </style>
-</head>
-
-<body>
-  <div class="header">LOMASHARES</div>
-
-  <div class="wrap">
-    <div class="card">
-      <p class="title">Deposit Funds</p>
-      <p class="sub">
-        Choose a quick amount or enter a custom amount. You’ll be redirected to Paystack to complete payment securely.
-      </p>
-
-      <div class="amountBox">
-        <div class="naira">₦</div>
-        <input id="amount" type="number" inputmode="numeric" placeholder="Enter amount e.g 5000" />
-      </div>
-
-      <div class="grid">
-        <button class="qbtn" type="button" data-amt="1000">₦1,000</button>
-        <button class="qbtn" type="button" data-amt="5000">₦5,000</button>
-        <button class="qbtn" type="button" data-amt="10000">₦10,000</button>
-        <button class="qbtn" type="button" data-amt="30000">₦30,000</button>
-        <button class="qbtn" type="button" data-amt="50000">₦50,000</button>
-        <button class="qbtn" type="button" data-amt="100000">₦100,000</button>
-      </div>
-
-      <button class="paybtn" id="payBtn" type="button">Continue to Paystack</button>
-
-      <div class="note">
-        ✅ Wallet will be credited only after Paystack confirms payment.<br/>
-        🔒 This prevents fake deposits.
-      </div>
-
-      <div class="tiny">
-        Minimum deposit: <b>₦1,000</b>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    <a class="fitem" href="dashboard.html">Home</a>
-    <a class="fitem" href="investment.html">Invest</a>
-    <a class="fitem" href="team.html">Team</a>
-    <a class="fitem" href="profile.html">Profile</a>
-  </div>
-<script type="module">
-  import "./auth.js";
-  window.addEventListener("load", () => window.authGuard(false));
-</script>
   <script>
-    // =========================
-    // Deposit Redirect Flow
-    // =========================
+    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
+    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
+  </script>
 
-    function getAuthEmail() {
-      const au = localStorage.getItem("authUser");
-      if (!au) return null;
-      try {
-        const u = JSON.parse(au);
-        return u && u.email ? u.email : null;
-      } catch {
-        return null;
-      }
-    }
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header"></header>
 
-    function setQuickButtons() {
-      document.querySelectorAll(".qbtn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          document.getElementById("amount").value = btn.dataset.amt;
-        });
+  <main class="container">
+    <div class="card">
+      <h3 style="margin:0;font-weight:1000">Fund Wallet</h3>
+      <div class="note">Minimum deposit: <b>₦1,000</b>. You’ll be redirected to Paystack to complete payment.</div>
+
+      <div class="field"><div class="dot"></div><input id="amount" inputmode="numeric" placeholder="Enter amount (₦)"></div>
+
+      <div class="sectionTitle">Quick Amount</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btnOutline" type="button" data-amt="1000">₦1,000</button>
+        <button class="btnOutline" type="button" data-amt="5000">₦5,000</button>
+        <button class="btnOutline" type="button" data-amt="10000">₦10,000</button>
+        <button class="btnOutline" type="button" data-amt="30000">₦30,000</button>
+        <button class="btnOutline" type="button" data-amt="50000">₦50,000</button>
+        <button class="btnOutline" type="button" data-amt="100000">₦100,000</button>
+      </div>
+
+      <button class="btn" id="depositBtn" type="button">Continue to Paystack</button>
+      <div class="note" id="msg"></div>
+    </div>
+  </main>
+
+  <footer class="footer"></footer>
+
+  <script type="module">
+    import { guard } from "./auth.js";
+    import { mountHeader, mountFooter, getUserEmail } from "./ui.js";
+
+    window.addEventListener("load", () => guard({ isPublicPage:false }));
+
+    mountHeader({
+      menuLinks: [
+        { href:"dashboard.html", label:"Dashboard", icon:"home" },
+        { href:"deposit.html", label:"Deposit", icon:"deposit" },
+        { href:"withdraw.html", label:"Withdraw", icon:"withdraw" },
+      ]
+    });
+    mountFooter("home");
+
+    const amountEl = document.getElementById("amount");
+    const msg = document.getElementById("msg");
+
+    document.querySelectorAll("button[data-amt]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        amountEl.value = b.getAttribute("data-amt");
       });
-    }
+    });
 
-    async function startDeposit() {
-      const email = getAuthEmail();
-      if (!email) {
-        alert("Please login first.");
-        window.location.href = "index.html";
-        return;
-      }
+    document.getElementById("depositBtn").addEventListener("click", async ()=>{
+      const email = await getUserEmail();
+      const amount = Number(String(amountEl.value||"").replace(/[^0-9.]/g,""));
+      if (!email) return alert("Not logged in");
+      if (!amount || amount < 1000) return alert("Minimum deposit is ₦1,000");
 
-      const amount = Number(document.getElementById("amount").value);
-      if (!amount || amount < 1000) {
-        alert("Minimum deposit is ₦1,000");
-        return;
-      }
+      msg.textContent = "Redirecting to Paystack…";
 
-      const payBtn = document.getElementById("payBtn");
-      payBtn.disabled = true;
-      payBtn.innerText = "Redirecting...";
-
-      try {
-        // Calls your backend API to initialize Paystack
-        const res = await fetch("/api/deposit-init", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, email })
+      // Redirect flow (requires api/deposit-init.js)
+      try{
+        const r = await fetch("/api/deposit-init", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ email, amount })
         });
-
-        const data = await res.json();
-
-        if (!res.ok || data.error) {
-          alert(data.error || "Unable to start deposit");
-          payBtn.disabled = false;
-          payBtn.innerText = "Continue to Paystack";
-          return;
-        }
-
-        // Redirect to Paystack hosted checkout
+        const data = await r.json();
+        if (!r.ok || data.error) throw new Error(data.error || "Deposit init failed");
         window.location.href = data.authorization_url;
-
-      } catch (e) {
-        console.error(e);
-        alert("Network error. Please try again.");
-        payBtn.disabled = false;
-        payBtn.innerText = "Continue to Paystack";
+      }catch(e){
+        msg.textContent = "Error: " + e.message;
       }
-    }
-
-    // Init page
-    document.addEventListener("DOMContentLoaded", () => {
-      // Ensure user is logged in
-      const email = getAuthEmail();
-      if (!email) {
-        window.location.href = "index.html";
-        return;
-      }
-
-      setQuickButtons();
-
-      document.getElementById("payBtn").addEventListener("click", startDeposit);
     });
   </script>
 </body>
-      </html>
+</html>
