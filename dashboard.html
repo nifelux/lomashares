@@ -5,53 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard | LomaShares</title>
 
+  <!-- Supabase keys (same snippet you used before) -->
   <script>
-    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
-    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
+    window.__SUPABASE_URL__ = "YOUR_SUPABASE_URL_HERE";
+    window.__SUPABASE_ANON_KEY__ = "YOUR_SUPABASE_ANON_KEY_HERE";
   </script>
 
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <!-- Sticky Header -->
   <header class="header"></header>
 
   <main class="container">
+    <!-- Wallet Card -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
         <div>
-          <div style="font-weight:1000;font-size:14px;color:rgba(234,242,255,.9)">Available Balance</div>
-          <div id="bal" style="font-weight:1000;font-size:22px;margin-top:6px">₦0</div>
-          <div id="balHint" class="note" style="margin-top:6px">Fetching wallet…</div>
+          <div style="font-weight:1000;font-size:13px;color:rgba(234,242,255,.88);letter-spacing:.6px">
+            AVAILABLE BALANCE
+          </div>
+          <div id="bal" style="font-weight:1000;font-size:24px;margin-top:8px">₦0</div>
+          <div id="balHint" class="note" style="margin-top:8px">Fetching wallet…</div>
         </div>
+
         <div style="text-align:right">
-          <div style="font-size:12px;color:rgba(234,242,255,.75);font-weight:900">200% in 30 days</div>
-          <div style="margin-top:6px" class="pTag">Mobile-first</div>
+          <div style="font-size:12px;color:rgba(234,242,255,.75);font-weight:900">Duration</div>
+          <div style="margin-top:6px" class="pTag">30 Days</div>
+          <div style="margin-top:10px;font-size:12px;color:rgba(234,242,255,.75);font-weight:900">Referral</div>
+          <div style="margin-top:6px" class="pTag">10%</div>
         </div>
       </div>
     </div>
 
+    <!-- Quick Links -->
     <div class="sectionTitle">Quick Links</div>
     <div class="quick">
       <a class="qbtn" href="deposit.html">
-        <span style="width:22px;height:22px;display:inline-block;color:#7db7ff">${""}</span>
+        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v10m0-10 4 4m-4-4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 14v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </span>
         <div>
           Deposit
           <small>Fund wallet</small>
         </div>
       </a>
+
       <a class="qbtn" href="withdraw.html">
+        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 21V11m0 10 4-4m-4 4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 10V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </span>
         <div>
           Withdraw
           <small>Min ₦500</small>
         </div>
       </a>
+
       <a class="qbtn" href="gift.html">
+        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M20 12v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9" stroke="currentColor" stroke-width="2"/>
+            <path d="M3 7h18v5H3V7Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 7v15" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 7c-2 0-4-1-4-3 0-1 1-2 2.5-2C12 2 12 7 12 7Zm0 0c2 0 4-1 4-3 0-1-1-2-2.5-2C12 2 12 7 12 7Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+        </span>
         <div>
           Gift Code
           <small>Redeem coupon</small>
         </div>
       </a>
+
       <a class="qbtn" href="refer.html">
+        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 14a5 5 0 1 0-6 0" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 20c1-3 3-4 5-4s4 1 5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19 8h2m-1-1v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
         <div>
           Refer
           <small>Earn 10%</small>
@@ -59,13 +98,66 @@
       </a>
     </div>
 
-    <div class="sectionTitle">Investment Products</div>
-    <div id="products" style="display:flex;flex-direction:column;gap:10px"></div>
+    <!-- Investment Plans Table (Like Banner) -->
+    <div class="sectionTitle">Investment Plans</div>
 
-    <div class="note">Products can be bought up to <b>2 times per product lifetime</b>. (Enforce in backend.)</div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:1000;letter-spacing:.8px">PLANS (30 DAYS)</div>
+        <div class="pTag">200% Total Return</div>
+      </div>
+
+      <div style="padding:10px 12px">
+        <div style="display:grid;grid-template-columns: 1.2fr 1fr 1.2fr;gap:8px;padding:10px 8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-weight:1000;font-size:12px;color:rgba(234,242,255,.85)">
+          <div>Investment (₦)</div>
+          <div>Daily (₦)</div>
+          <div>Total in 30 Days (₦)</div>
+        </div>
+
+        <div id="plans" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+    <!-- Other Details -->
+    <div class="sectionTitle">Other Details</div>
+    <div class="card">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
+          <div style="font-weight:900">Referral Commission: <span style="color:rgba(234,242,255,.85)">10%</span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
+          <div style="font-weight:900">Withdrawal Charges: <span style="color:rgba(234,242,255,.85)">10%</span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
+          <div style="font-weight:900">Minimum Withdrawal: <span style="color:rgba(234,242,255,.85)">₦500</span></div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
+          <div style="font-weight:900">Duration: <span style="color:rgba(234,242,255,.85)">30 Days</span></div>
+        </div>
+
+        <div style="margin-top:4px;padding:12px;border-radius:16px;background:rgba(27,107,255,.12);border:1px solid rgba(27,107,255,.25)">
+          <div style="font-weight:1000">Daily Check-in: <span style="color:#7db7ff">₦20</span></div>
+          <div class="note" style="margin-top:6px">
+            Daily bonus is handled through coupon/gift logic (no separate bonus wallet).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      Tap <b>Invest</b> on any plan to continue. (We’ll connect it to <code>/api/investment.js</code> next.)
+    </div>
   </main>
 
-  <footer class="footer"></footer>
+  <!-- Sticky Footer -->
+  <footer class="footer" id="footer"></footer>
 
   <script type="module">
     import { guard } from "./auth.js";
@@ -81,59 +173,55 @@
         { href:"profile.html", label:"Profile", icon:"profile" }
       ]
     });
-    mountFooter("home");
 
-    const PRODUCTS = [
-      { id:1, price:3000 },
-      { id:2, price:5000 },
-      { id:3, price:7000 },
-      { id:4, price:10000 },
-      { id:5, price:15000 },
-      { id:6, price:20000 },
-      { id:7, price:30000 },
-      { id:8, price:40000 },
-      { id:9, price:50000 },
-      { id:10, price:100000 },
-    ];
-    const DAYS = 30;
-    const TOTAL_RETURN_MULT = 2; // 200%
+    mountFooter("home");
 
     function naira(n){ return "₦" + Number(n||0).toLocaleString(); }
 
-    function renderProducts(){
-      const box = document.getElementById("products");
-      box.innerHTML = "";
-      PRODUCTS.forEach(p=>{
-        const totalReturn = p.price * TOTAL_RETURN_MULT;
-        const daily = totalReturn / DAYS;
+    // EXACT product list from your banner image
+    const PLANS = [
+      { id: 1, invest: 3000, daily: 200, total30: 6000 },
+      { id: 2, invest: 5000, daily: 333, total30: 10000 },
+      { id: 3, invest: 10000, daily: 667, total30: 20000 },
+      { id: 4, invest: 30000, daily: 2000, total30: 60000 },
+      { id: 5, invest: 100000, daily: 8333, total30: 200000 },
+      { id: 6, invest: 200000, daily: 16333, total30: 400000 },
+      { id: 7, invest: 300000, daily: 20000, total30: 600000 },
+      { id: 8, invest: 400000, daily: 26667, total30: 1000000 },
+      { id: 9, invest: 500000, daily: 33333, total30: 1750000 },
+      { id: 10, invest: 1000000, daily: 66667, total30: 2000000 },
+    ];
 
-        const div = document.createElement("div");
-        div.className = "product";
-        div.innerHTML = `
-          <div>
-            <h4>Product ${p.id} • ${naira(p.price)}</h4>
-            <p>Daily income: <b>${naira(daily.toFixed(2))}</b><br>Return: <b>200%</b> in <b>${DAYS} days</b></p>
-          </div>
-          <div class="pRight">
-            <div class="pTag">Active</div>
-            <button class="btnOutline" type="button" data-id="${p.id}">Invest</button>
+    function renderPlans(){
+      const wrap = document.getElementById("plans");
+      wrap.innerHTML = "";
+
+      PLANS.forEach(p => {
+        const row = document.createElement("div");
+        row.style.cssText = "display:grid;grid-template-columns: 1.2fr 1fr 1.2fr;gap:8px;align-items:center;padding:12px 10px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)";
+        row.innerHTML = `
+          <div style="font-weight:1000">${naira(p.invest)}</div>
+          <div style="font-weight:1000;color:rgba(234,242,255,.88)">${naira(p.daily)}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div style="font-weight:1000">${naira(p.total30)}</div>
+            <button class="btnOutline" type="button" data-id="${p.id}" style="min-width:86px;padding:10px 12px;border-radius:14px">Invest</button>
           </div>
         `;
-        box.appendChild(div);
+        wrap.appendChild(row);
       });
 
-      box.querySelectorAll("button[data-id]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
+      wrap.querySelectorAll("button[data-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
           const pid = btn.getAttribute("data-id");
-          // You will later call your backend /api/investment here.
-          alert("Invest clicked for Product " + pid + ". (Connect to /api/investment.js next)");
+          const plan = PLANS.find(x => String(x.id) === String(pid));
+          alert(`Invest clicked: ₦${plan.invest.toLocaleString()} plan. Next we connect /api/investment.js`);
         });
       });
     }
 
     async function loadWallet(){
-      const email = await getUserEmail();
       const hint = document.getElementById("balHint");
+      const email = await getUserEmail();
       if (!email){ hint.textContent = "Not logged in"; return; }
       try{
         const bal = await fetchWalletBalanceByEmail(email);
@@ -144,7 +232,7 @@
       }
     }
 
-    renderProducts();
+    renderPlans();
     loadWallet();
   </script>
 </body>
