@@ -137,6 +137,10 @@ body { background: linear-gradient(180deg, #0a0a0a, #001f4d); color:#fff; min-he
   <a href="team.html"><i class="fas fa-users"></i> Team</a>
   <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
 </footer>
+  <script type="module">
+  import "./auth.js";
+  window.addEventListener("load", () => window.authGuard(false));
+  </script>
 <script>
 // Check auth status and redirect accordingly
 (function() {
