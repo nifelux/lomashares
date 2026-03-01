@@ -1,46 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Deposit Successful</title>
+  <title>Deposit Successful | LomaShares</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
-<body style="font-family:Arial;padding:20px">
+<body>
+  <header class="header">
+    <div class="brand">LOMASHARES</div>
+  </header>
 
-<h2>Verifying your payment...</h2>
+  <main class="container">
+    <div class="card">
+      <h2 style="margin:0;font-weight:1000">Confirming Deposit…</h2>
+      <p class="note" id="msg">Please wait while we verify your payment.</p>
 
-<script>
-  const params = new URLSearchParams(window.location.search);
-  const reference = params.get("reference");
+      <div style="margin-top:12px;padding:14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:12px;font-weight:1000;color:rgba(234,242,255,.85);letter-spacing:.8px">REFERENCE</div>
+        <div id="ref" style="margin-top:6px;font-weight:1000;word-break:break-all">—</div>
+      </div>
 
-  async function verifyPayment() {
-    if (!reference) {
-      document.body.innerHTML = "<h3>No reference found</h3>";
-      return;
+      <button class="btn" id="goDash" type="button" style="display:none">Go to Dashboard</button>
+      <button class="btnOutline" id="retry" type="button" style="display:none">Retry Verification</button>
+    </div>
+  </main>
+
+  <script>
+    function getRef() {
+      const url = new URL(window.location.href);
+      return url.searchParams.get("reference") || url.searchParams.get("ref") || "";
     }
 
-    const res = await fetch("/api/deposit-verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ reference })
+    async function verify() {
+      const reference = getRef();
+      document.getElementById("ref").textContent = reference || "—";
+
+      const msg = document.getElementById("msg");
+      const goDash = document.getElementById("goDash");
+      const retry = document.getElementById("retry");
+
+      if (!reference) {
+        msg.textContent = "No reference found. Please contact support.";
+        retry.style.display = "block";
+        return;
+      }
+
+      msg.textContent = "Verifying payment with Paystack…";
+
+      try {
+        const r = await fetch("/api/deposit-verify?reference=" + encodeURIComponent(reference));
+        const data = await r.json();
+
+        if (!r.ok || data.error) throw new Error(data.error || "Verification failed");
+
+        msg.textContent = `Deposit verified ✅ ₦${Number(data.amount).toLocaleString()} credited to your wallet.`;
+        goDash.style.display = "block";
+      } catch (e) {
+        msg.textContent = "Verification failed: " + e.message;
+        retry.style.display = "block";
+      }
+    }
+
+    document.getElementById("goDash").addEventListener("click", () => {
+      window.location.href = "dashboard.html";
     });
+    document.getElementById("retry").addEventListener("click", verify);
 
-    const data = await res.json();
-
-    if (data.error) {
-      document.body.innerHTML = "<h3>Verification failed</h3><p>" + data.error + "</p>";
-      return;
-    }
-
-    document.body.innerHTML = `
-      <h2>Deposit Successful ✅</h2>
-      <p>Your wallet has been credited.</p>
-      <button onclick="location.href='dashboard.html'">Go to Dashboard</button>
-    `;
-  }
-
-  verifyPayment();
-</script>
-
+    verify();
+  </script>
 </body>
-</html>
+  </html>
