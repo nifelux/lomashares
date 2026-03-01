@@ -4,37 +4,310 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard | LomaShares</title>
-
-  <!-- Supabase keys (same snippet you used before) -->
+<!-- Supabase keys (same snippet you used before) -->
   <script>
     window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
     window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
   </script>
+  <style>
+    :root{
+      --bg:#070B14;
+      --card: rgba(255,255,255,.04);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.10);
+      --stroke2: rgba(255,255,255,.14);
+      --txt:#EAF2FF;
+      --muted: rgba(234,242,255,.72);
+      --muted2: rgba(234,242,255,.58);
+      --blue:#1B6BFF;
+      --blue2:#7DB7FF;
+      --black:#000;
+      --good:#18c37e;
+      --bad:#ff4d4f;
+      --warn:#ffb020;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r16:16px;
+      --r18:18px;
+      --r20:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(900px 420px at 50% -120px, rgba(27,107,255,.25), transparent 55%),
+                  radial-gradient(700px 360px at 80% 10%, rgba(125,183,255,.14), transparent 60%),
+                  var(--bg);
+      color:var(--txt);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 86px; /* space for footer */
+      max-width: 520px;
+      margin: 0 auto;
+    }
 
-  <link rel="stylesheet" href="style.css">
+    /* Header */
+    .header{
+      position: sticky;
+      top:0;
+      z-index: 30;
+      height: 64px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.24));
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .brand{
+      font-weight: 1000;
+      letter-spacing: 2.6px;
+      font-size: 15px;
+      color: rgba(234,242,255,.92);
+    }
+
+    .container{padding: 14px 14px 0}
+    .card{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: var(--r20);
+      box-shadow: var(--shadow);
+    }
+    .cardPad{padding: 16px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .col{display:flex;flex-direction:column}
+    .label{
+      font-size: 12px;
+      font-weight: 1000;
+      color: rgba(234,242,255,.82);
+      letter-spacing: .8px;
+    }
+    .value{
+      font-size: 26px;
+      font-weight: 1000;
+      margin-top: 8px;
+    }
+    .note{font-size: 12px; color: var(--muted2); margin-top: 8px; line-height: 1.45}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(125,183,255,.35);
+      background: rgba(27,107,255,.12);
+      color: rgba(234,242,255,.92);
+      font-size: 12px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .sectionTitle{
+      margin: 16px 4px 10px;
+      font-weight: 1000;
+      letter-spacing: .7px;
+      color: rgba(234,242,255,.88);
+      font-size: 13px;
+    }
+
+    /* Quick links */
+    .quick{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .qbtn{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      padding: 14px 14px;
+      border-radius: var(--r18);
+      text-decoration:none;
+      color: var(--txt);
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 14px 40px rgba(0,0,0,.28);
+    }
+    .qbtn small{display:block; margin-top:2px; color: var(--muted2); font-size: 11px; font-weight: 800;}
+    .qIcon{
+      width: 38px; height: 38px;
+      border-radius: 14px;
+      display:flex;align-items:center;justify-content:center;
+      background: rgba(27,107,255,.12);
+      border: 1px solid rgba(125,183,255,.25);
+      color: var(--blue2);
+      flex: 0 0 auto;
+    }
+    svg{display:block}
+
+    /* Plans table */
+    .plansHead{
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .plansWrap{padding: 10px 10px 12px}
+    .gridHead{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: 8px;
+      padding: 10px 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      font-size: 12px;
+      font-weight: 1000;
+      color: rgba(234,242,255,.85);
+    }
+    .planRow{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: 8px;
+      align-items:center;
+      padding: 12px 10px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .money{font-weight: 1000}
+    .rightCol{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .btn{
+      border: none;
+      cursor:pointer;
+      background: linear-gradient(135deg, rgba(27,107,255,1), rgba(125,183,255,.85));
+      color: #071021;
+      font-weight: 1000;
+      padding: 10px 12px;
+      border-radius: 14px;
+      min-width: 88px;
+      box-shadow: 0 12px 26px rgba(27,107,255,.28);
+    }
+    .btn:disabled{
+      opacity: .55;
+      cursor:not-allowed;
+    }
+
+    .refBox{
+      margin-top: 10px;
+      display:flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .refBox input{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: var(--txt);
+      outline:none;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .refBox input::placeholder{color: rgba(234,242,255,.45)}
+
+    /* Other details */
+    .detailLine{
+      display:flex;align-items:center;gap:10px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(255,255,255,.10);
+    }
+    .dot{width:10px;height:10px;border-radius:50%;background: var(--blue2)}
+    .detailLine b{color: rgba(234,242,255,.92)}
+    .detailLine span{color: rgba(234,242,255,.78); font-weight: 900}
+    .detailLine:last-child{border-bottom:none}
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 96px;
+      z-index: 60;
+      width: calc(100% - 24px);
+      max-width: 520px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(10px);
+      display:none;
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .toast.good{border-color: rgba(24,195,126,.45)}
+    .toast.bad{border-color: rgba(255,77,79,.45)}
+    .toast .sub{display:block;margin-top:5px;color: rgba(234,242,255,.65); font-weight: 800; font-size: 12px}
+
+    /* Footer */
+    .footer{
+      position: fixed;
+      bottom:0;
+      left:50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 520px;
+      height: 78px;
+      background: rgba(0,0,0,.68);
+      border-top: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(14px);
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 40;
+    }
+    .fbtn{
+      text-decoration:none;
+      color: rgba(234,242,255,.70);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap: 6px;
+      font-weight: 900;
+      font-size: 11px;
+      letter-spacing: .2px;
+    }
+    .fbtn svg{width: 22px; height: 22px}
+    .fbtn.active{color: rgba(234,242,255,.95)}
+    .fbtn.active .icoWrap{
+      background: rgba(27,107,255,.16);
+      border-color: rgba(125,183,255,.35);
+      color: var(--blue2);
+    }
+    .icoWrap{
+      width: 40px; height: 40px;
+      border-radius: 16px;
+      display:flex;align-items:center;justify-content:center;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(234,242,255,.75);
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Sticky Header -->
-  <header class="header"></header>
+  <header class="header">
+    <div class="brand">LOMASHARES</div>
+  </header>
 
   <main class="container">
-    <!-- Wallet Card -->
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div>
-          <div style="font-weight:1000;font-size:13px;color:rgba(234,242,255,.88);letter-spacing:.6px">
-            AVAILABLE BALANCE
-          </div>
-          <div id="bal" style="font-weight:1000;font-size:24px;margin-top:8px">₦0</div>
-          <div id="balHint" class="note" style="margin-top:8px">Fetching wallet…</div>
-        </div>
 
-        <div style="text-align:right">
-          <div style="font-size:12px;color:rgba(234,242,255,.75);font-weight:900">Duration</div>
-          <div style="margin-top:6px" class="pTag">30 Days</div>
-          <div style="margin-top:10px;font-size:12px;color:rgba(234,242,255,.75);font-weight:900">Referral</div>
-          <div style="margin-top:6px" class="pTag">10%</div>
+    <!-- Wallet -->
+    <div class="card cardPad">
+      <div class="row">
+        <div class="col">
+          <div class="label">AVAILABLE BALANCE</div>
+          <div id="walletBalance" class="value">₦0</div>
+          <div id="walletHint" class="note">Fetching wallet…</div>
+        </div>
+        <div class="col" style="align-items:flex-end;text-align:right;gap:8px">
+          <div class="pill">Duration: 30 Days</div>
+          <div class="pill">Total Return: 200%</div>
+          <div class="pill">Referral: 10%</div>
         </div>
       </div>
     </div>
@@ -43,7 +316,7 @@
     <div class="sectionTitle">Quick Links</div>
     <div class="quick">
       <a class="qbtn" href="deposit.html">
-        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+        <span class="qIcon">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 3v10m0-10 4 4m-4-4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4 14v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6" stroke="currentColor" stroke-width="2"/>
@@ -56,7 +329,7 @@
       </a>
 
       <a class="qbtn" href="withdraw.html">
-        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+        <span class="qIcon">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M12 21V11m0 10 4-4m-4 4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4 10V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v6" stroke="currentColor" stroke-width="2"/>
@@ -69,7 +342,7 @@
       </a>
 
       <a class="qbtn" href="gift.html">
-        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+        <span class="qIcon">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M20 12v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9" stroke="currentColor" stroke-width="2"/>
             <path d="M3 7h18v5H3V7Z" stroke="currentColor" stroke-width="2"/>
@@ -78,13 +351,13 @@
           </svg>
         </span>
         <div>
-          Gift Code
-          <small>Redeem coupon</small>
+          Gift
+          <small>Redeem code</small>
         </div>
       </a>
 
       <a class="qbtn" href="refer.html">
-        <span style="width:22px;height:22px;display:inline-flex;color:#7db7ff">
+        <span class="qIcon">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M15 14a5 5 0 1 0-6 0" stroke="currentColor" stroke-width="2"/>
             <path d="M7 20c1-3 3-4 5-4s4 1 5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -98,87 +371,116 @@
       </a>
     </div>
 
-    <!-- Investment Plans Table (Like Banner) -->
+    <!-- Plans -->
     <div class="sectionTitle">Investment Plans</div>
 
-    <div class="card" style="padding:0;overflow:hidden">
-      <div style="padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:1000;letter-spacing:.8px">PLANS (30 DAYS)</div>
-        <div class="pTag">200% Total Return</div>
+    <div class="card">
+      <div class="plansHead">
+        <div style="font-weight:1000;letter-spacing:.9px">PLANS (30 DAYS)</div>
+        <div class="pill">Daily income pays every 24h</div>
       </div>
 
-      <div style="padding:10px 12px">
-        <div style="display:grid;grid-template-columns: 1.2fr 1fr 1.2fr;gap:8px;padding:10px 8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-weight:1000;font-size:12px;color:rgba(234,242,255,.85)">
+      <div class="plansWrap">
+        <div class="gridHead">
           <div>Investment (₦)</div>
           <div>Daily (₦)</div>
-          <div>Total in 30 Days (₦)</div>
+          <div>Total 30 Days (₦)</div>
         </div>
 
-        <div id="plans" style="margin-top:10px;display:flex;flex-direction:column;gap:8px"></div>
+        <div id="plansList"></div>
+
+        <div class="refBox">
+          <input id="refInput" type="text" placeholder="Referral code (optional) e.g LOMA123456">
+        </div>
+
+        <div class="note" style="margin-top:10px">
+          Each plan can be bought <b>twice</b> lifetime. Daily income is credited automatically every 24 hours by server cron.
+        </div>
       </div>
     </div>
 
-    <!-- Other Details -->
+    <!-- Other details -->
     <div class="sectionTitle">Other Details</div>
-    <div class="card">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
-          <div style="font-weight:900">Referral Commission: <span style="color:rgba(234,242,255,.85)">10%</span></div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
-          <div style="font-weight:900">Withdrawal Charges: <span style="color:rgba(234,242,255,.85)">10%</span></div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
-          <div style="font-weight:900">Minimum Withdrawal: <span style="color:rgba(234,242,255,.85)">₦500</span></div>
-        </div>
-
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="width:10px;height:10px;border-radius:50%;background:#7db7ff"></span>
-          <div style="font-weight:900">Duration: <span style="color:rgba(234,242,255,.85)">30 Days</span></div>
-        </div>
-
-        <div style="margin-top:4px;padding:12px;border-radius:16px;background:rgba(27,107,255,.12);border:1px solid rgba(27,107,255,.25)">
-          <div style="font-weight:1000">Daily Check-in: <span style="color:#7db7ff">₦20</span></div>
-          <div class="note" style="margin-top:6px">
-            Daily bonus is handled through coupon/gift logic (no separate bonus wallet).
-          </div>
-        </div>
+    <div class="card cardPad">
+      <div class="detailLine">
+        <span class="dot"></span>
+        <div><b>Referral Commission:</b> <span>10%</span></div>
+      </div>
+      <div class="detailLine">
+        <span class="dot"></span>
+        <div><b>Withdrawal Charges:</b> <span>10%</span></div>
+      </div>
+      <div class="detailLine">
+        <span class="dot"></span>
+        <div><b>Minimum Withdrawal:</b> <span>₦500</span></div>
+      </div>
+      <div class="detailLine">
+        <span class="dot"></span>
+        <div><b>Duration:</b> <span>30 Days</span></div>
+      </div>
+      <div class="detailLine">
+        <span class="dot"></span>
+        <div><b>Daily Check-in:</b> <span>₦20</span></div>
       </div>
     </div>
 
-    <div class="note">
-      Tap <b>Invest</b> on any plan to continue. (We’ll connect it to <code>/api/investment.js</code> next.)
-    </div>
   </main>
 
-  <!-- Sticky Footer -->
-  <footer class="footer" id="footer"></footer>
+  <!-- Toast -->
+  <div id="toast" class="toast">
+    <span id="toastMain">—</span>
+    <span id="toastSub" class="sub"></span>
+  </div>
 
-  <script type="module">
-    import { guard } from "./auth.js";
-    import { mountHeader, mountFooter, getUserEmail, fetchWalletBalanceByEmail } from "./ui.js";
+  <!-- Footer -->
+  <footer class="footer">
+    <a class="fbtn active" href="dashboard.html">
+      <span class="icoWrap">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      Home
+    </a>
 
-    window.addEventListener("load", () => guard({ isPublicPage:false }));
+    <a class="fbtn" href="investment.html">
+      <span class="icoWrap">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 17v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 17V7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 17v-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 17V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Invest
+    </a>
 
-    mountHeader({
-      menuLinks: [
-        { href:"dashboard.html", label:"Dashboard", icon:"home" },
-        { href:"deposit.html", label:"Deposit", icon:"deposit" },
-        { href:"withdraw.html", label:"Withdraw", icon:"withdraw" },
-        { href:"profile.html", label:"Profile", icon:"profile" }
-      ]
-    });
+    <a class="fbtn" href="team.html">
+      <span class="icoWrap">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M16 11a4 4 0 1 0-8 0" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 21c1.2-4 4-6 8-6s6.8 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Team
+    </a>
 
-    mountFooter("home");
+    <a class="fbtn" href="profile.html">
+      <span class="icoWrap">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M4 21c1.5-5 4.5-7 8-7s6.5 2 8 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Profile
+    </a>
+  </footer>
 
-    function naira(n){ return "₦" + Number(n||0).toLocaleString(); }
-
-    // EXACT product list from your banner image
+  <script>
+    // -----------------------------
+    // 10 banner plans (exact)
+    // -----------------------------
     const PLANS = [
       { id: 1, invest: 3000, daily: 200, total30: 6000 },
       { id: 2, invest: 5000, daily: 333, total30: 10000 },
@@ -192,48 +494,172 @@
       { id: 10, invest: 1000000, daily: 66667, total30: 2000000 },
     ];
 
+    function naira(n){ return "₦" + Number(n||0).toLocaleString(); }
+
+    // -----------------------------
+    // Toast
+    // -----------------------------
+    let toastTimer = null;
+    function showToast(type, main, sub){
+      const t = document.getElementById("toast");
+      const m = document.getElementById("toastMain");
+      const s = document.getElementById("toastSub");
+      t.classList.remove("good","bad");
+      t.classList.add(type === "good" ? "good" : "bad");
+      m.textContent = main || "";
+      s.textContent = sub || "";
+      t.style.display = "block";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>{ t.style.display="none"; }, 4200);
+    }
+
+    // -----------------------------
+    // Auth email (frontend storage)
+    // If your login stores email in localStorage as "authUser"
+    // -----------------------------
+    function getAuthEmail(){
+      try{
+        const au = JSON.parse(localStorage.getItem("authUser") || "null");
+        if (au && au.email) return String(au.email).toLowerCase();
+      }catch(e){}
+      return null;
+    }
+
+    // -----------------------------
+    // Load wallet balance
+    // expects API: /api/wallet-balance (POST) {email}
+    // returns: {ok:true, balance: number}
+    // -----------------------------
+    async function loadWallet(){
+      const hint = document.getElementById("walletHint");
+      const balEl = document.getElementById("walletBalance");
+
+      const email = getAuthEmail();
+      if(!email){
+        hint.textContent = "Not logged in. Redirecting…";
+        setTimeout(()=> window.location.href="index.html", 700);
+        return;
+      }
+
+      try{
+        const r = await fetch("/api/wallet-balance",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await r.json();
+
+        if(!r.ok || data.error){
+          hint.textContent = "Wallet API error";
+          showToast("bad","Wallet error", data.error || "Could not fetch wallet");
+          return;
+        }
+
+        balEl.textContent = naira(data.balance || 0);
+        hint.textContent = "Wallet updated.";
+      }catch(e){
+        hint.textContent = "Network error";
+        showToast("bad","Network error","Failed to fetch wallet");
+      }
+    }
+
+    // -----------------------------
+    // Render plan list
+    // -----------------------------
     function renderPlans(){
-      const wrap = document.getElementById("plans");
+      const wrap = document.getElementById("plansList");
       wrap.innerHTML = "";
 
-      PLANS.forEach(p => {
+      PLANS.forEach(p=>{
         const row = document.createElement("div");
-        row.style.cssText = "display:grid;grid-template-columns: 1.2fr 1fr 1.2fr;gap:8px;align-items:center;padding:12px 10px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)";
+        row.className = "planRow";
         row.innerHTML = `
-          <div style="font-weight:1000">${naira(p.invest)}</div>
-          <div style="font-weight:1000;color:rgba(234,242,255,.88)">${naira(p.daily)}</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-            <div style="font-weight:1000">${naira(p.total30)}</div>
-            <button class="btnOutline" type="button" data-id="${p.id}" style="min-width:86px;padding:10px 12px;border-radius:14px">Invest</button>
+          <div class="money">${naira(p.invest)}</div>
+          <div class="money" style="color:rgba(234,242,255,.88)">${naira(p.daily)}</div>
+          <div class="rightCol">
+            <div class="money">${naira(p.total30)}</div>
+            <button class="btn" type="button" data-plan="${p.id}">Invest</button>
           </div>
         `;
         wrap.appendChild(row);
       });
 
-      wrap.querySelectorAll("button[data-id]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const pid = btn.getAttribute("data-id");
-          const plan = PLANS.find(x => String(x.id) === String(pid));
-          alert(`Invest clicked: ₦${plan.invest.toLocaleString()} plan. Next we connect /api/investment.js`);
-        });
+      wrap.querySelectorAll("button[data-plan]").forEach(btn=>{
+        btn.addEventListener("click", ()=> onInvest(btn));
       });
     }
 
-    async function loadWallet(){
-      const hint = document.getElementById("balHint");
-      const email = await getUserEmail();
-      if (!email){ hint.textContent = "Not logged in"; return; }
+    // -----------------------------
+    // Invest flow
+    // calls /api/investment (POST) {email, plan_id, referral_code}
+    // -----------------------------
+    async function onInvest(btn){
+      const plan_id = Number(btn.getAttribute("data-plan"));
+      const plan = PLANS.find(x=>x.id===plan_id);
+      if(!plan) return;
+
+      const email = getAuthEmail();
+      if(!email){
+        showToast("bad","Not logged in","Please login again.");
+        window.location.href="index.html";
+        return;
+      }
+
+      const referral_code = (document.getElementById("refInput").value || "").trim();
+
+      btn.disabled = true;
+      btn.textContent = "Wait…";
+
       try{
-        const bal = await fetchWalletBalanceByEmail(email);
-        document.getElementById("bal").textContent = naira(bal);
-        hint.textContent = "Wallet updated.";
+        const r = await fetch("/api/investment",{
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({
+            email,
+            plan_id,
+            referral_code: referral_code || null
+          })
+        });
+
+        const data = await r.json();
+
+        if(!r.ok || data.error){
+          showToast("bad","Investment failed", data.error || "Try again");
+          btn.disabled = false;
+          btn.textContent = "Invest";
+          return;
+        }
+
+        showToast(
+          "good",
+          "Investment successful ✅",
+          `Plan ₦${plan.invest.toLocaleString()} activated. Daily income will credit after 24 hours.`
+        );
+
+        // refresh wallet
+        await loadWallet();
+
+        btn.disabled = false;
+        btn.textContent = "Invest";
       }catch(e){
-        hint.textContent = "Wallet error: " + e.message;
+        showToast("bad","Network error","Could not invest now.");
+        btn.disabled = false;
+        btn.textContent = "Invest";
       }
     }
 
-    renderPlans();
-    loadWallet();
+    // -----------------------------
+    // Basic page protection
+    // -----------------------------
+    window.addEventListener("load", ()=>{
+      const email = getAuthEmail();
+      if(!email){
+        window.location.href = "index.html";
+        return;
+      }
+      renderPlans();
+      loadWallet();
+    });
   </script>
 </body>
-</html>
+  </html>
