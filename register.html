@@ -1,248 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lomashares Register</title>
-  
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | LomaShares</title>
+
+  <!-- Supabase keys (PASTE YOUR REAL VALUES) -->
+  <script>
+    window.__SUPABASE_URL__ = "YOUR_SUPABASE_URL_HERE";
+    window.__SUPABASE_ANON_KEY__ = "YOUR_SUPABASE_ANON_KEY_HERE";
+  </script>
+
   <style>
-    /* ------------------- */
-    /* Base Styles */
-    /* ------------------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
-    }
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    body{margin:0;background:#071428;color:#eaf2ff;min-height:100vh}
 
-    body {
-      height: 100vh;
-      background: linear-gradient(135deg, #0a0a0a, #001f4d);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-    }
-
-    /* ------------------- */
-    /* Register Container */
-    /* ------------------- */
-    .register-container {
-      background-color: #0b0b0b;
-      width: 100%;
-      max-width: 400px;
-      padding: 40px 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-
-    /* ------------------- */
-    /* Logo */
-    /* ------------------- */
-    .register-container .logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      object-fit: cover;
-      border: 2px solid #00bfff;
-    }
-
-    /* ------------------- */
-    /* Heading */
-    /* ------------------- */
-    .register-container h1 {
-      margin-bottom: 25px;
-      font-size: 28px;
-      font-weight: 700;
-      color: #00bfff;
-    }
-
-    /* ------------------- */
-    /* Input Fields */
-    /* ------------------- */
-    .register-container input {
-      width: 100%;
-      padding: 15px 20px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      background-color: #111;
-      color: #fff;
-    }
-
-    .register-container input::placeholder {
-      color: #888;
-    }
-
-    /* ------------------- */
-    /* Buttons */
-    /* ------------------- */
-    .register-container button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, #00bfff, #004080);
-      color: #fff;
-      font-size: 18px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .register-container button:hover {
-      background: linear-gradient(90deg, #004080, #00bfff);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,191,255,0.4);
-    }
-
-    /* ------------------- */
-    /* Links */
-    /* ------------------- */
-    .register-container .login-link {
-      display: block;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #888;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .register-container .login-link:hover {
-      color: #00bfff;
-    }
-
-    /* ------------------- */
-    /* Mobile Friendly */
-    /* ------------------- */
-    @media (max-width: 480px) {
-      .register-container {
-        padding: 35px 20px;
-      }
-    }
     /* ===== Sticky Header ===== */
-.main-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background: linear-gradient(to right, #000000, #0a1f44);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-}
+    .main-header{
+      position:sticky;top:0;z-index:50;
+      height:60px;
+      background:linear-gradient(90deg,#050b16,#0b2a59);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .logo-text{
+      color:#7db7ff;
+      font-weight:1000;
+      letter-spacing:2px;
+      font-size:16px;
+      text-align:center;
+      pointer-events:none;
+    }
 
-/* ===== Logo ===== */
-.logo-text {
-    color: #1e90ff;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
+    /* Hamburger (left) */
+    .menu-btn{
+      position:absolute;left:14px;
+      width:40px;height:40px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .menu-btn span{
+      display:block;width:18px;height:2px;background:#7db7ff;
+      margin:3px 0;border-radius:2px;
+    }
 
-/* ===== Hamburger ===== */
-.menu-icon {
-    position: absolute;
-    left: 20px;
-    cursor: pointer;
-}
+    /* Dropdown */
+    .menu{
+      position:absolute;top:62px;left:14px;
+      width:190px;
+      background:#050b16;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+      display:none;
+      overflow:hidden;
+    }
+    .menu a{
+      display:block;
+      padding:14px 14px;
+      color:#eaf2ff;
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .menu a:last-child{border-bottom:none}
+    .menu a:hover{background:rgba(27,107,255,.14)}
 
-.menu-icon span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background: #1e90ff;
-    margin: 5px 0;
-    border-radius: 3px;
-}
+    /* ===== Layout ===== */
+    .wrap{
+      max-width:520px;margin:0 auto;
+      padding:16px 14px 18px;
+    }
 
-/* ===== Dropdown Menu ===== */
-.dropdown-menu {
-    position: absolute;
-    top: 60px;
-    left: 10px;
-    background: #0a1f44;
-    width: 180px;
-    border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    display: none;
-    flex-direction: column;
-    padding: 10px 0;
-}
+    .card{
+      margin-top:14px;
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 14px 40px rgba(0,0,0,.35);
+    }
 
-.dropdown-menu a {
-    color: white;
-    padding: 12px 20px;
-    text-decoration: none;
-    transition: 0.3s;
-}
+    /* Logo circle */
+    .brandMark{
+      width:84px;height:84px;border-radius:50%;
+      margin:6px auto 10px;
+      display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 30% 30%, #1b6bff, #0b2a59 55%, #050b16 100%);
+      border:3px solid rgba(247,213,106,.9);
+      box-shadow:0 18px 45px rgba(27,107,255,.18);
+      font-weight:1000;
+      letter-spacing:2px;
+      color:#eaf2ff;
+      font-size:18px;
+    }
 
-.dropdown-menu a:hover {
-    background: #1e90ff;
-}
+    h1{
+      margin:10px 0 6px;
+      font-size:20px;
+      font-weight:1000;
+      text-align:center;
+      letter-spacing:.3px;
+    }
+    .sub{
+      margin:0 0 14px;
+      text-align:center;
+      color:rgba(234,242,255,.75);
+      font-size:13px;
+      line-height:1.45;
+    }
 
-/* ===== Push Page Down ===== */
-body {
-    margin: 0;
-    padding-top: 70px;
-    font-family: Arial, sans-serif;
+    .field{
+      margin-top:10px;
+      background:#020817;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,#f7d56a,#caa33a);
+      flex:0 0 auto;
+      box-shadow:0 10px 20px rgba(202,163,58,.12);
+    }
+    input{
+      width:100%;
+      border:none;outline:none;background:transparent;
+      color:#eaf2ff;font-size:14px;font-weight:800;
+    }
+    input::placeholder{color:rgba(234,242,255,.45);font-weight:700}
+
+    .btn{
+      width:100%;
+      margin-top:14px;
+      padding:14px 12px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(90deg,#1b6bff,#0b2a59);
+      color:#fff;
+      font-weight:1000;
+      font-size:15px;
+      cursor:pointer;
+      box-shadow:0 18px 35px rgba(27,107,255,.22);
+    }
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+
+    .row{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      font-size:12px;
+      color:rgba(234,242,255,.72);
+    }
+    .row a{color:#7db7ff;text-decoration:none;font-weight:900}
+    .row a:hover{text-decoration:underline}
+
+    .miniNote{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:rgba(234,242,255,.78);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    .chipRow{
+      margin-top:10px;
+      display:flex;gap:8px;flex-wrap:wrap;
+    }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      color:rgba(234,242,255,.85);
+      font-weight:900;
+      font-size:12px;
+    }
+
+    /* About modal */
+    .modalWrap{
+      position:fixed;inset:0;display:none;
+      align-items:flex-end;justify-content:center;
+      background:rgba(0,0,0,.55);
+      z-index:80;
+      padding:14px;
+    }
+    .modal{
+      width:100%;max-width:520px;
+      background:#050b16;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 18px 45px rgba(0,0,0,.55);
+    }
+    .modal h3{margin:0 0 6px;font-size:16px;font-weight:1000;color:#eaf2ff}
+    .modal p{margin:0;color:rgba(234,242,255,.75);font-size:13px;line-height:1.55}
+    .modal .close{
+      margin-top:12px;
+      width:100%;
+      padding:12px;
+      border:none;border-radius:14px;
+      background:rgba(255,255,255,.08);
+      color:#eaf2ff;
+      font-weight:1000;
+      cursor:pointer;
     }
   </style>
 </head>
+
 <body>
-<header class="main-header">
-    <div class="menu-icon" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="menu-btn" id="menuBtn" aria-label="menu">
+      <div>
+        <span></span><span></span><span></span>
+      </div>
     </div>
 
-    <div class="logo-text">
-        LOMASHARES
-    </div>
+    <div class="logo-text">LOMASHARES</div>
 
-    <div class="dropdown-menu" id="dropdownMenu">
+    <nav class="menu" id="dropdownMenu">
+      <a href="index.html">Login</a>
+      <a href="register.html">Register</a>
+      <a href="#" id="aboutLink">About</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="brandMark">LS</div>
+
+      <h1>Create Account</h1>
+      <p class="sub">Start investing in minutes. Your wallet is created automatically after signup.</p>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="email" type="email" placeholder="Email address" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="referral" type="text" placeholder="Referral code (optional)" autocomplete="off" />
+      </div>
+
+      <div class="chipRow">
+        <div class="chip">Referral bonus: 10%</div>
+        <div class="chip">Wallet auto-created</div>
+        <div class="chip">Secure login</div>
+      </div>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="password" type="password" placeholder="Password" autocomplete="new-password" />
+      </div>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="confirm" type="password" placeholder="Confirm password" autocomplete="new-password" />
+      </div>
+
+      <button class="btn" id="registerBtn" type="button">Create account</button>
+
+      <div class="row">
+        <span>Already have an account?</span>
         <a href="index.html">Login</a>
-        <a href="register.html">Register</a>
-        <a href="about.html">About</a>
+      </div>
+
+      <div class="miniNote" id="msg">
+        Tip: If you received a referral code, enter it before creating your account.
+      </div>
+    </section>
+  </main>
+
+  <!-- About Modal -->
+  <div class="modalWrap" id="aboutModal">
+    <div class="modal">
+      <h3>About LomaShares</h3>
+      <p>
+        LomaShares is a mobile-first investment platform designed for Nigerian users.
+        Create an account, fund your wallet via Paystack, invest in products, and track transactions.
+      </p>
+      <button class="close" id="closeAbout" type="button">Close</button>
     </div>
-</header>
-  <div class="register-container">
-    <!-- Logo -->
-    <img src="https://pix1.b442d6eefbd6173bad7ee5bde6cd31e8.com/download/1883a493e66deeb1c3e78de269ba8aff/waploaded+wapo+mobi/Lomashares-(waploaded.wapo.mobi).jpg" alt="Lomashares Logo" class="logo">
-
-    <h1>Create Account</h1>
-
-<input type="email" id="email" placeholder="Email">
-<input type="text" id="referral-code" placeholder="Referral Code (Optional)">
-<input type="password" id="password" placeholder="Password">
-<input type="password" id="confirm-password" placeholder="Confirm Password">
-
-<button onclick="handleRegister()">Register</button>
-    <a href="index.html" class="login-link">Already have an account? Login</a>
   </div>
+<script type="module">
+  import "./auth.js";
+  window.addEventListener("load", () => window.authGuard(true));
+</script>
+  <!-- Supabase Auth Register + Referral validation -->
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-  <script type="module" src="lomashares-frontend.js"></script>
-<script>
-    const registerBtn = document.getElementById('register-btn');
-    registerBtn.addEventListener('click', () => {
-      const email = document.getElementById('register-email').value;
-      const password = document.getElementById('register-password').value;
-      if(!email || !password) return alert('Please fill all fields');
-      register(email, password); // Calls lomashares-frontend.js register function
+    const SUPABASE_URL = window.__SUPABASE_URL__;
+    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function authGuardPublic() {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) window.location.href = "dashboard.html";
+    }
+
+    window.addEventListener("load", authGuardPublic);
+
+    function setMsg(text) {
+      const el = document.getElementById("msg");
+      el.textContent = text;
+    }
+
+    async function validateReferral(code) {
+      if (!code) return true;
+
+      // Check referral exists in profiles table
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id, referral_code")
+        .eq("referral_code", code)
+        .limit(1);
+
+      if (error) return false;
+      return (data && data.length > 0);
+    }
+
+    async function handleRegister() {
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const referral = document.getElementById("referral").value.trim().toUpperCase();
+      const password = document.getElementById("password").value.trim();
+      const confirm = document.getElementById("confirm").value.trim();
+
+      if (!email || !password || !confirm) return alert("All fields are required");
+      if (password.length < 6) return alert("Password must be at least 6 characters");
+      if (password !== confirm) return alert("Passwords do not match");
+
+      // Validate referral code if provided
+      if (referral) {
+        setMsg("Checking referral code...");
+        const ok = await validateReferral(referral);
+        if (!ok) {
+          setMsg("Invalid referral code. Please check and try again.");
+          return alert("Invalid referral code");
+        }
+      }
+
+      const btn = document.getElementById("registerBtn");
+      btn.disabled = true;
+      btn.textContent = "Creating account...";
+      setMsg("Creating your account...");
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        btn.disabled = false;
+        btn.textContent = "Create account";
+        setMsg("Signup failed: " + error.message);
+        return alert(error.message);
+      }
+
+      // Save referred_by into profile (wallet/profile trigger already creates profile + wallet)
+      if (referral && data?.user?.id) {
+        await supabase.from("profiles").update({ referred_by: referral }).eq("id", data.user.id);
+      }
+
+      setMsg("Account created. Please login.");
+      alert("Registration successful! Please login.");
+      window.location.href = "index.html";
+    }
+
+    document.getElementById("registerBtn").addEventListener("click", handleRegister);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleRegister();
+    });
+  </script>
+
+  <!-- UI Menu Script -->
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const menu = document.getElementById("dropdownMenu");
+    const aboutModal = document.getElementById("aboutModal");
+    const aboutLink = document.getElementById("aboutLink");
+    const closeAbout = document.getElementById("closeAbout");
+
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) menu.style.display = "none";
+    });
+
+    aboutLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      menu.style.display = "none";
+      aboutModal.style.display = "flex";
+    });
+
+    closeAbout.addEventListener("click", () => {
+      aboutModal.style.display = "none";
+    });
+
+    aboutModal.addEventListener("click", (e) => {
+      if (e.target === aboutModal) aboutModal.style.display = "none";
     });
   </script>
 </body>
-</html>
+  </html>
