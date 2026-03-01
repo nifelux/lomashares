@@ -5,352 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login | LomaShares</title>
 
-  <!-- Supabase keys (PASTE YOUR REAL VALUES) -->
   <script>
-    window.__SUPABASE_URL__ = "https://lpnnqxalmihxgszoifpa.supabase.co";
-    window.__SUPABASE_ANON_KEY__ = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxwbm5xeGFsbWloeGdzem9pZnBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MzM1ODEsImV4cCI6MjA4NzMwOTU4MX0.1hLW5gizjcPTKyfzx_XD9dxqegtXVQroNCclX1AaqZw";
+    window.__SUPABASE_URL__ = "YOUR_SUPABASE_URL_HERE";
+    window.__SUPABASE_ANON_KEY__ = "YOUR_SUPABASE_ANON_KEY_HERE";
   </script>
 
-  <style>
-    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    body{margin:0;background:#071428;color:#eaf2ff;min-height:100vh}
-
-    /* ===== Sticky Header ===== */
-    .main-header{
-      position:sticky;top:0;z-index:50;
-      height:60px;
-      background:linear-gradient(90deg,#050b16,#0b2a59);
-      display:flex;align-items:center;justify-content:center;
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    .logo-text{
-      color:#7db7ff;
-      font-weight:1000;
-      letter-spacing:2px;
-      font-size:16px;
-      text-align:center;
-      pointer-events:none;
-    }
-
-    /* Hamburger (left) */
-    .menu-btn{
-      position:absolute;left:14px;
-      width:40px;height:40px;border-radius:12px;
-      display:flex;align-items:center;justify-content:center;
-      cursor:pointer;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-    }
-    .menu-btn span{
-      display:block;width:18px;height:2px;background:#7db7ff;
-      margin:3px 0;border-radius:2px;
-    }
-
-    /* Dropdown */
-    .menu{
-      position:absolute;top:62px;left:14px;
-      width:190px;
-      background:#050b16;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      box-shadow:0 18px 45px rgba(0,0,0,.45);
-      display:none;
-      overflow:hidden;
-    }
-    .menu a{
-      display:block;
-      padding:14px 14px;
-      color:#eaf2ff;
-      text-decoration:none;
-      font-weight:900;
-      font-size:13px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .menu a:last-child{border-bottom:none}
-    .menu a:hover{background:rgba(27,107,255,.14)}
-
-    /* ===== Layout ===== */
-    .wrap{
-      max-width:520px;margin:0 auto;
-      padding:16px 14px 18px;
-    }
-
-    .card{
-      margin-top:14px;
-      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:18px;
-      padding:18px;
-      box-shadow:0 14px 40px rgba(0,0,0,.35);
-    }
-
-    /* Logo circle */
-    .brandMark{
-      width:84px;height:84px;border-radius:50%;
-      margin:6px auto 10px;
-      display:flex;align-items:center;justify-content:center;
-      background:radial-gradient(circle at 30% 30%, #1b6bff, #0b2a59 55%, #050b16 100%);
-      border:3px solid rgba(247,213,106,.9);
-      box-shadow:0 18px 45px rgba(27,107,255,.18);
-      font-weight:1000;
-      letter-spacing:2px;
-      color:#eaf2ff;
-      font-size:18px;
-    }
-
-    h1{
-      margin:10px 0 6px;
-      font-size:20px;
-      font-weight:1000;
-      text-align:center;
-      letter-spacing:.3px;
-    }
-    .sub{
-      margin:0 0 14px;
-      text-align:center;
-      color:rgba(234,242,255,.75);
-      font-size:13px;
-      line-height:1.45;
-    }
-
-    .field{
-      margin-top:10px;
-      background:#020817;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:14px;
-      padding:12px 12px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:linear-gradient(135deg,#f7d56a,#caa33a);
-      flex:0 0 auto;
-      box-shadow:0 10px 20px rgba(202,163,58,.12);
-    }
-    input{
-      width:100%;
-      border:none;outline:none;background:transparent;
-      color:#eaf2ff;font-size:14px;font-weight:800;
-    }
-    input::placeholder{color:rgba(234,242,255,.45);font-weight:700}
-
-    .btn{
-      width:100%;
-      margin-top:14px;
-      padding:14px 12px;
-      border:none;
-      border-radius:16px;
-      background:linear-gradient(90deg,#1b6bff,#0b2a59);
-      color:#fff;
-      font-weight:1000;
-      font-size:15px;
-      cursor:pointer;
-      box-shadow:0 18px 35px rgba(27,107,255,.22);
-    }
-    .btn:disabled{opacity:.6;cursor:not-allowed}
-
-    .row{
-      margin-top:12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      font-size:12px;
-      color:rgba(234,242,255,.72);
-    }
-    .row a{color:#7db7ff;text-decoration:none;font-weight:900}
-    .row a:hover{text-decoration:underline}
-
-    .miniNote{
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:14px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-      color:rgba(234,242,255,.78);
-      font-size:12px;
-      line-height:1.45;
-    }
-
-    /* About modal */
-    .modalWrap{
-      position:fixed;inset:0;display:none;
-      align-items:flex-end;justify-content:center;
-      background:rgba(0,0,0,.55);
-      z-index:80;
-      padding:14px;
-    }
-    .modal{
-      width:100%;max-width:520px;
-      background:#050b16;
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:18px;
-      padding:16px;
-      box-shadow:0 18px 45px rgba(0,0,0,.55);
-    }
-    .modal h3{margin:0 0 6px;font-size:16px;font-weight:1000;color:#eaf2ff}
-    .modal p{margin:0;color:rgba(234,242,255,.75);font-size:13px;line-height:1.55}
-    .modal .close{
-      margin-top:12px;
-      width:100%;
-      padding:12px;
-      border:none;border-radius:14px;
-      background:rgba(255,255,255,.08);
-      color:#eaf2ff;
-      font-weight:1000;
-      cursor:pointer;
-    }
-
-    /* Mobile-only feel */
-    @media (min-width: 820px){
-      .wrap{padding-top:26px}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <!-- Header -->
-  <header class="main-header">
-    <div class="menu-btn" id="menuBtn" aria-label="menu">
-      <div>
-        <span></span><span></span><span></span>
-      </div>
-    </div>
+  <header class="header"></header>
 
-    <div class="logo-text">LOMASHARES</div>
-
-    <nav class="menu" id="dropdownMenu">
-      <a href="index.html">Login</a>
-      <a href="register.html">Register</a>
-      <a href="#" id="aboutLink">About</a>
-    </nav>
-  </header>
-
-  <main class="wrap">
-    <section class="card">
-      <div class="brandMark">LS</div>
-
-      <h1>Welcome back</h1>
-      <p class="sub">Login to continue your investments and manage your wallet securely.</p>
-
-      <div class="field">
-        <div class="dot"></div>
-        <input id="email" type="email" placeholder="Email address" autocomplete="email" />
+  <main class="container">
+    <div class="card">
+      <div style="display:flex;justify-content:center;margin-bottom:8px">
+        <div style="width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+          background:radial-gradient(circle at 30% 30%, #1b6bff, #0b2a59 55%, #050b16 100%);
+          border:3px solid rgba(247,213,106,.9); box-shadow:0 18px 45px rgba(27,107,255,.18);
+          font-weight:1000;letter-spacing:2px;">LS</div>
       </div>
 
-      <div class="field">
-        <div class="dot"></div>
-        <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-      </div>
+      <h2 style="margin:6px 0 6px;text-align:center;font-weight:1000">Welcome back</h2>
+      <div class="note" style="text-align:center;margin-top:0">Login to manage your wallet and investments.</div>
+
+      <div class="field"><div class="dot"></div><input id="email" type="email" placeholder="Email address"></div>
+      <div class="field"><div class="dot"></div><input id="password" type="password" placeholder="Password"></div>
 
       <button class="btn" id="loginBtn" type="button">Login</button>
+      <button class="btnOutline" type="button" onclick="location.href='register.html'">Create account</button>
 
-      <div class="row">
-        <span>New to LomaShares?</span>
-        <a href="register.html">Create an account</a>
-      </div>
-
-      <div class="miniNote">
-        Deposits are credited after successful Paystack verification. Always protect your login details.
-      </div>
-    </section>
+      <div class="note">Deposits are credited after successful Paystack verification.</div>
+    </div>
   </main>
 
-  <!-- About Modal -->
-  <div class="modalWrap" id="aboutModal">
-    <div class="modal">
-      <h3>About LomaShares</h3>
-      <p>
-        LomaShares is a mobile-first investment platform designed for Nigerian users.
-        You can fund your wallet, invest in available products, and track your transactions in one place.
-      </p>
-      <button class="close" id="closeAbout" type="button">Close</button>
-    </div>
-  </div>
-
-  <!-- Supabase Auth + Guard -->
   <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+    import { guard, doLogin } from "./auth.js";
+    import { mountHeader } from "./ui.js";
 
-    const SUPABASE_URL = window.__SUPABASE_URL__;
-    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
+    // PUBLIC guard: if logged in -> dashboard
+    window.addEventListener("load", () => guard({ isPublicPage: true }));
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-      alert("Missing Supabase keys. Please add SUPABASE URL and ANON KEY in index.html.");
-    }
+    mountHeader({
+      menuLinks: [
+        { href:"index.html", label:"Login", icon:"home" },
+        { href:"register.html", label:"Register", icon:"profile" },
+        { href:"#", label:"About", icon:"team" }
+      ]
+    });
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function authGuardPublic() {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session) window.location.href = "dashboard.html";
-    }
-
-    // Run guard: if already logged in, go to dashboard
-    window.addEventListener("load", authGuardPublic);
-
-    // Login action
-    async function handleLogin() {
-      const email = document.getElementById("email").value.trim();
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim().toLowerCase();
       const password = document.getElementById("password").value.trim();
-
       if (!email || !password) return alert("Enter email and password");
+      try { await doLogin(email, password); }
+      catch(e){ alert(e.message); }
+    });
 
-      const btn = document.getElementById("loginBtn");
-      btn.disabled = true;
-      btn.textContent = "Logging in...";
-
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        btn.disabled = false;
-        btn.textContent = "Login";
-        alert(error.message);
-        return;
-      }
-
-      window.location.href = "dashboard.html";
-    }
-
-    // Wire button + Enter key
-    document.getElementById("loginBtn").addEventListener("click", handleLogin);
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-  </script>
-
-  <!-- UI Menu Script (no external dependencies) -->
-  <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const menu = document.getElementById("dropdownMenu");
-    const aboutModal = document.getElementById("aboutModal");
-    const aboutLink = document.getElementById("aboutLink");
-    const closeAbout = document.getElementById("closeAbout");
-
-    menuBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menu.style.display = (menu.style.display === "block") ? "none" : "block";
-    });
-
-    document.addEventListener("click", (e) => {
-      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) menu.style.display = "none";
-    });
-
-    aboutLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      menu.style.display = "none";
-      aboutModal.style.display = "flex";
-    });
-
-    closeAbout.addEventListener("click", () => {
-      aboutModal.style.display = "none";
-    });
-
-    aboutModal.addEventListener("click", (e) => {
-      if (e.target === aboutModal) aboutModal.style.display = "none";
+      if (e.key === "Enter") document.getElementById("loginBtn").click();
     });
   </script>
 </body>
-  </html>
+</html>
