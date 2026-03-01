@@ -1,264 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lomashares Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | LomaShares</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Supabase keys (PASTE YOUR REAL VALUES) -->
+  <script>
+    window.__SUPABASE_URL__ = "YOUR_SUPABASE_URL_HERE";
+    window.__SUPABASE_ANON_KEY__ = "YOUR_SUPABASE_ANON_KEY_HERE";
+  </script>
 
   <style>
-    /* ------------------- */
-    /* Base Styles */
-    /* ------------------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Roboto', sans-serif;
+    *{box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    body{margin:0;background:#071428;color:#eaf2ff;min-height:100vh}
+
+    /* ===== Sticky Header ===== */
+    .main-header{
+      position:sticky;top:0;z-index:50;
+      height:60px;
+      background:linear-gradient(90deg,#050b16,#0b2a59);
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .logo-text{
+      color:#7db7ff;
+      font-weight:1000;
+      letter-spacing:2px;
+      font-size:16px;
+      text-align:center;
+      pointer-events:none;
     }
 
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0a0a0a, #001f4d);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      padding-top: 70px; /* space for sticky header */
+    /* Hamburger (left) */
+    .menu-btn{
+      position:absolute;left:14px;
+      width:40px;height:40px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .menu-btn span{
+      display:block;width:18px;height:2px;background:#7db7ff;
+      margin:3px 0;border-radius:2px;
     }
 
-    a { text-decoration: none; }
+    /* Dropdown */
+    .menu{
+      position:absolute;top:62px;left:14px;
+      width:190px;
+      background:#050b16;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      box-shadow:0 18px 45px rgba(0,0,0,.45);
+      display:none;
+      overflow:hidden;
+    }
+    .menu a{
+      display:block;
+      padding:14px 14px;
+      color:#eaf2ff;
+      text-decoration:none;
+      font-weight:900;
+      font-size:13px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .menu a:last-child{border-bottom:none}
+    .menu a:hover{background:rgba(27,107,255,.14)}
 
-    /* ------------------- */
-    /* Sticky Header */
-    /* ------------------- */
-    header.main-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: linear-gradient(to right, #000000, #0a1f44);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    /* ===== Layout ===== */
+    .wrap{
+      max-width:520px;margin:0 auto;
+      padding:16px 14px 18px;
     }
 
-    .logo-text {
-      color: #1e90ff;
-      font-size: 20px;
-      font-weight: bold;
-      letter-spacing: 2px;
+    .card{
+      margin-top:14px;
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 14px 40px rgba(0,0,0,.35);
     }
 
-    .menu-icon {
-      position: absolute;
-      left: 20px;
-      cursor: pointer;
+    /* Logo circle */
+    .brandMark{
+      width:84px;height:84px;border-radius:50%;
+      margin:6px auto 10px;
+      display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(circle at 30% 30%, #1b6bff, #0b2a59 55%, #050b16 100%);
+      border:3px solid rgba(247,213,106,.9);
+      box-shadow:0 18px 45px rgba(27,107,255,.18);
+      font-weight:1000;
+      letter-spacing:2px;
+      color:#eaf2ff;
+      font-size:18px;
     }
 
-    .menu-icon span {
-      display: block;
-      width: 25px;
-      height: 3px;
-      background: #1e90ff;
-      margin: 5px 0;
-      border-radius: 3px;
+    h1{
+      margin:10px 0 6px;
+      font-size:20px;
+      font-weight:1000;
+      text-align:center;
+      letter-spacing:.3px;
+    }
+    .sub{
+      margin:0 0 14px;
+      text-align:center;
+      color:rgba(234,242,255,.75);
+      font-size:13px;
+      line-height:1.45;
     }
 
-    .dropdown-menu {
-      position: absolute;
-      top: 60px;
-      left: 10px;
-      background: #0a1f44;
-      width: 180px;
-      border-radius: 8px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-      display: none;
-      flex-direction: column;
-      padding: 10px 0;
+    .field{
+      margin-top:10px;
+      background:#020817;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,#f7d56a,#caa33a);
+      flex:0 0 auto;
+      box-shadow:0 10px 20px rgba(202,163,58,.12);
+    }
+    input{
+      width:100%;
+      border:none;outline:none;background:transparent;
+      color:#eaf2ff;font-size:14px;font-weight:800;
+    }
+    input::placeholder{color:rgba(234,242,255,.45);font-weight:700}
+
+    .btn{
+      width:100%;
+      margin-top:14px;
+      padding:14px 12px;
+      border:none;
+      border-radius:16px;
+      background:linear-gradient(90deg,#1b6bff,#0b2a59);
+      color:#fff;
+      font-weight:1000;
+      font-size:15px;
+      cursor:pointer;
+      box-shadow:0 18px 35px rgba(27,107,255,.22);
+    }
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+
+    .row{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      font-size:12px;
+      color:rgba(234,242,255,.72);
+    }
+    .row a{color:#7db7ff;text-decoration:none;font-weight:900}
+    .row a:hover{text-decoration:underline}
+
+    .miniNote{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:rgba(234,242,255,.78);
+      font-size:12px;
+      line-height:1.45;
     }
 
-    .dropdown-menu a {
-      color: white;
-      padding: 12px 20px;
-      text-decoration: none;
-      transition: 0.3s;
+    /* About modal */
+    .modalWrap{
+      position:fixed;inset:0;display:none;
+      align-items:flex-end;justify-content:center;
+      background:rgba(0,0,0,.55);
+      z-index:80;
+      padding:14px;
+    }
+    .modal{
+      width:100%;max-width:520px;
+      background:#050b16;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 18px 45px rgba(0,0,0,.55);
+    }
+    .modal h3{margin:0 0 6px;font-size:16px;font-weight:1000;color:#eaf2ff}
+    .modal p{margin:0;color:rgba(234,242,255,.75);font-size:13px;line-height:1.55}
+    .modal .close{
+      margin-top:12px;
+      width:100%;
+      padding:12px;
+      border:none;border-radius:14px;
+      background:rgba(255,255,255,.08);
+      color:#eaf2ff;
+      font-weight:1000;
+      cursor:pointer;
     }
 
-    .dropdown-menu a:hover {
-      background: #1e90ff;
-    }
-
-    /* ------------------- */
-    /* Login Container */
-    /* ------------------- */
-    .login-container {
-      background-color: #0b0b0b;
-      width: 100%;
-      max-width: 400px;
-      padding: 40px 30px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-
-    .login-container .logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-bottom: 20px;
-      object-fit: cover;
-      border: 2px solid #00bfff;
-    }
-
-    .login-container h1 {
-      margin-bottom: 25px;
-      font-size: 28px;
-      font-weight: 700;
-      color: #00bfff;
-    }
-
-    .login-container input {
-      width: 100%;
-      padding: 15px 20px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      background-color: #111;
-      color: #fff;
-    }
-
-    .login-container input::placeholder {
-      color: #888;
-    }
-
-    .login-container button {
-      width: 100%;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 10px;
-      border: none;
-      background: linear-gradient(90deg, #00bfff, #004080);
-      color: #fff;
-      font-size: 18px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .login-container button:hover {
-      background: linear-gradient(90deg, #004080, #00bfff);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(0,191,255,0.4);
-    }
-
-    .login-container .register-link {
-      display: block;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #888;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    .login-container .register-link:hover {
-      color: #00bfff;
-    }
-
-    @media (max-width: 480px) {
-      .login-container { padding: 35px 20px; }
-      .login-container h1 { font-size: 24px; }
+    /* Mobile-only feel */
+    @media (min-width: 820px){
+      .wrap{padding-top:26px}
     }
   </style>
 </head>
+
 <body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="menu-btn" id="menuBtn" aria-label="menu">
+      <div>
+        <span></span><span></span><span></span>
+      </div>
+    </div>
 
-<header class="main-header">
-  <div class="menu-icon" onclick="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
+    <div class="logo-text">LOMASHARES</div>
+
+    <nav class="menu" id="dropdownMenu">
+      <a href="index.html">Login</a>
+      <a href="register.html">Register</a>
+      <a href="#" id="aboutLink">About</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="brandMark">LS</div>
+
+      <h1>Welcome back</h1>
+      <p class="sub">Login to continue your investments and manage your wallet securely.</p>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="email" type="email" placeholder="Email address" autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <div class="dot"></div>
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+      </div>
+
+      <button class="btn" id="loginBtn" type="button">Login</button>
+
+      <div class="row">
+        <span>New to LomaShares?</span>
+        <a href="register.html">Create an account</a>
+      </div>
+
+      <div class="miniNote">
+        Deposits are credited after successful Paystack verification. Always protect your login details.
+      </div>
+    </section>
+  </main>
+
+  <!-- About Modal -->
+  <div class="modalWrap" id="aboutModal">
+    <div class="modal">
+      <h3>About LomaShares</h3>
+      <p>
+        LomaShares is a mobile-first investment platform designed for Nigerian users.
+        You can fund your wallet, invest in available products, and track your transactions in one place.
+      </p>
+      <button class="close" id="closeAbout" type="button">Close</button>
+    </div>
   </div>
 
-  <div class="logo-text">LOMASHARES</div>
+  <!-- Supabase Auth + Guard -->
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-  <div class="dropdown-menu" id="dropdownMenu">
-    <a href="index.html">Login</a>
-    <a href="register.html">Register</a>
-    <a href="about.html">About</a>
-  </div>
-</header>
+    const SUPABASE_URL = window.__SUPABASE_URL__;
+    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__;
 
-<div class="login-container">
-  <!-- Logo -->
-  <img src="https://pix1.b442d6eefbd6173bad7ee5bde6cd31e8.com/download/1883a493e66deeb1c3e78de269ba8aff/waploaded+wapo+mobi/Lomashares-(waploaded.wapo.mobi).jpg" alt="Lomashares Logo" class="logo">
-
-  <h1>Welcome Back</h1>
-
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Password">
-
-  <button onclick="handleLogin()">Login</button>
-
-  <a href="register.html" class="register-link">Don't have an account? Register</a>
-</div>
-
-<script type="module" src="lomashares-frontend.js"></script>
-<script>
-// Check auth status and redirect accordingly
-(function() {
-    const authUser = JSON.parse(localStorage.getItem('authUser'));
-
-    const currentPage = window.location.pathname.split("/").pop();
-
-    // Pages that require login
-    const protectedPages = [
-        "dashboard.html",
-        "investment.html",
-        "deposit.html",
-        "withdraw.html",
-        "profile.html",
-        "refer.html",
-        "team.html",
-        "transactions.html",
-        "admin-withdrawals.html"
-    ];
-
-    // Redirect to dashboard if already logged in and on index/login/register
-    if(authUser && ["index.html", "login.html", "register.html"].includes(currentPage)) {
-        window.location.href = "dashboard.html";
-        return;
+    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+      alert("Missing Supabase keys. Please add SUPABASE URL and ANON KEY in index.html.");
     }
 
-    // Redirect to index page if not logged in and on protected pages
-    if(!authUser && protectedPages.includes(currentPage)) {
-        window.location.href = "index.html";
-        return;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function authGuardPublic() {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) window.location.href = "dashboard.html";
     }
-})();
-</script>
+
+    // Run guard: if already logged in, go to dashboard
+    window.addEventListener("load", authGuardPublic);
+
+    // Login action
+    async function handleLogin() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!email || !password) return alert("Enter email and password");
+
+      const btn = document.getElementById("loginBtn");
+      btn.disabled = true;
+      btn.textContent = "Logging in...";
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        btn.disabled = false;
+        btn.textContent = "Login";
+        alert(error.message);
+        return;
+      }
+
+      window.location.href = "dashboard.html";
+    }
+
+    // Wire button + Enter key
+    document.getElementById("loginBtn").addEventListener("click", handleLogin);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+  </script>
+
+  <!-- UI Menu Script (no external dependencies) -->
   <script>
-  // Dropdown Menu Toggle
-  window.toggleMenu = function() {
+    const menuBtn = document.getElementById("menuBtn");
     const menu = document.getElementById("dropdownMenu");
-    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  }
+    const aboutModal = document.getElementById("aboutModal");
+    const aboutLink = document.getElementById("aboutLink");
+    const closeAbout = document.getElementById("closeAbout");
 
-  window.addEventListener("click", function(e) {
-    const menu = document.getElementById("dropdownMenu");
-    const icon = document.querySelector(".menu-icon");
-    if (!icon.contains(e.target) && !menu.contains(e.target)) {
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.style.display = (menu.style.display === "block") ? "none" : "block";
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) menu.style.display = "none";
+    });
+
+    aboutLink.addEventListener("click", (e) => {
+      e.preventDefault();
       menu.style.display = "none";
-    }
-  });
-</script>
+      aboutModal.style.display = "flex";
+    });
 
+    closeAbout.addEventListener("click", () => {
+      aboutModal.style.display = "none";
+    });
+
+    aboutModal.addEventListener("click", (e) => {
+      if (e.target === aboutModal) aboutModal.style.display = "none";
+    });
+  </script>
 </body>
-</html>
+  </html>
